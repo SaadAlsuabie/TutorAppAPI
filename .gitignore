@@ -1,0 +1,57 @@
+# Byte-compiled Python files
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Django-specific files
+db.sqlite3
+db.sqlite3-journal
+media/  # Ignore uploaded media files (unless you want to track them)
+staticfiles/  # Ignore collected static files (managed by `collectstatic`)
+
+# Logs and runtime data
+*.log
+*.sqlite3-wal
+*.sqlite3-shm
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PyCharm specific
+*.iml
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Docker files
+.dockerenv
+Dockerfile
+docker-compose.yml
+
+# Secrets and environment variables
+.env
+*.env
+
+# Migrations (if you don't want to track migration files)
+# migrations/
+# __init__.py:
+# !migrations/__init__.py
+
+# Test artifacts
+htmlcov/
+coverage.xml
+.nox/
+.tox/
