@@ -5,6 +5,11 @@ from .models import (
     Payment, Feedback, Recording, PurchasedRecording, Message, Notification
 )
 
+from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
@@ -41,8 +46,37 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 class UserLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
+    username_or_email = serializers.CharField()
     password = serializers.CharField()
+
+    def validate(self, data):
+        username_or_email = data.get('username_or_email')
+        password = data.get('password')
+
+        if not username_or_email or not password:
+            raise serializers.ValidationError("Both username/email and password are required.")
+
+        # Authenticate the user using either username or email
+        user = None
+        if '@' in username_or_email:  # Check if it's an email
+            try:
+                user = User.objects.get(email=username_or_email)
+                username = user.username
+            except User.DoesNotExist:
+                raise serializers.ValidationError("User with this email does not exist.")
+        else:  # Assume it's a username
+            username = username_or_email
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            raise serializers.ValidationError("Invalid credentials.")
+
+        if not user.is_active:
+            raise serializers.ValidationError("This user account is disabled.")
+
+        data['user'] = user
+        return data
 
 class TutorProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(read_only=True)

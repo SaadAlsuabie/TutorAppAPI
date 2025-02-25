@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
-    TutorProfile, SessionRequest, Feedback, TutorAvailability,
+    User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
     Recording, Payment, Message, Notification
 )
 from api.serializers import (
@@ -21,58 +21,81 @@ User = get_user_model()
 
 class RegisterAPI(APIView):
     def post(self, request):
-        serializer = UserRegisterSerializer(data=request.data)
+        try:
+            serializer = UserRegisterSerializer(data=request.data)
 
-        if serializer.is_valid():
-            email = serializer.validated_data.get('email')
-            role = serializer.validated_data.get('role')
+            if serializer.is_valid():
+                email = serializer.validated_data.get('email')
+                role = serializer.validated_data.get('role')
 
-            # Check if the user already exists
-            if User.objects.filter(email=email).exists():
+                # Check if the user already exists
+                if User.objects.filter(email=email).exists():
+                    return Response(
+                        {"error": "A user with this email already has an active account."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Validate email domain based on role
+                if role == 'student' and not email.endswith('@student.example.com'):
+                    return Response(
+                        {"error": "Student email must end with @student.example.com."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                elif role == 'tutor' and not email.endswith('@tutor.example.com'):
+                    return Response(
+                        {"error": "Tutor email must end with @tutor.example.com."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Save the user if all checks pass
+                user = serializer.save()
                 return Response(
-                    {"error": "A user with this email already has an active account."},
-                    status=status.HTTP_400_BAD_REQUEST
+                    {"message": "User registered successfully", "user_id": user.id},
+                    status=status.HTTP_201_CREATED
                 )
 
-            # Validate email domain based on role
-            if role == 'student' and not email.endswith('@student.example.com'):
-                return Response(
-                    {"error": "Student email must end with @student.example.com."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            elif role == 'tutor' and not email.endswith('@tutor.example.com'):
-                return Response(
-                    {"error": "Tutor email must end with @tutor.example.com."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            # Return serializer errors if validation fails
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # Save the user if all checks pass
-            user = serializer.save()
-            return Response(
-                {"message": "User registered successfully", "user_id": user.id},
-                status=status.HTTP_201_CREATED
-            )
-
-        # Return serializer errors if validation fails
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 class LoginAPI(APIView):
     def post(self, request):
-        serializer = UserLoginSerializer(data=request.data, context={'request': request})
+        try:
+            recv_data = request.data
+            logged_user = None
+            username_or_email = recv_data.get('username_or_email', '')
+            password = recv_data.get('password', '')
 
-        if serializer.is_valid():
-            try:
-                user = serializer.validated_data['user']  # Access the authenticated user
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                }, status=status.HTTP_200_OK)
-            except KeyError:
-                return Response({"error": "User not found in validated data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not username_or_email or not password:
+                return Response({"error": "Username/email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Attempt to find the user by username or email
+            if '@' in username_or_email:  # If it's an email
+                logged_user = User.objects.filter(email=username_or_email).first()
+            else:  # If it's a username
+                logged_user = User.objects.filter(username=username_or_email).first()
+
+            if not logged_user:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Validate the serializer
+            serializer = UserLoginSerializer(data=request.data, context={'request': request})
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Extract the authenticated user from validated data
+            user = serializer.validated_data['user']
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 # Student Path Views
 class BrowseTutorsAPI(APIView):
     permission_classes = [IsAuthenticated]
