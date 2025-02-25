@@ -4,13 +4,14 @@ from .views import (
     BrowseTutorsAPI, RequestSessionAPI, LeaveFeedbackAPI,
     SetAvailabilityAPI, AcceptDeclineSessionAPI, UploadRecordingAPI,
     MakePaymentAPI, SendMessageAPI, GetMessagesAPI,
-    GetNotificationsAPI, SearchTutorsAPI
+    GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView
 )
 
 urlpatterns = [
     # Authentication
     path('register/', RegisterAPI.as_view(), name='register'),
     path('login/', LoginAPI.as_view(), name='login'),
+    path('logout/', LogoutAPIView.as_view(), name='logout'),
 
     # Student Path
     path('browse-tutors/', BrowseTutorsAPI.as_view(), name='browse-tutors'),

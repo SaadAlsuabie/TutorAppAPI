@@ -96,6 +96,50 @@ class LoginAPI(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import OutstandingToken, BlacklistedToken
+from rest_framework import status
+
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Get the refresh token from the request data
+            refresh_token = request.data.get('refresh_token')
+
+            if not refresh_token:
+                return Response(
+                    {"error": "Refresh token is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Blacklist the provided refresh token
+            token = OutstandingToken.objects.filter(token=refresh_token).first()
+
+            if not token:
+                return Response(
+                    {"error": "Invalid or expired refresh token."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Create a blacklisted token entry
+            BlacklistedToken.objects.create(token=token)
+
+            return Response(
+                {"message": "Successfully logged out."},
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 # Student Path Views
 class BrowseTutorsAPI(APIView):
     permission_classes = [IsAuthenticated]
