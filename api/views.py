@@ -23,22 +23,24 @@ User = get_user_model()
 class RegisterAPI(APIView):
     authentication_classes = []
     permission_classes = [AllowAny] 
-    
+    """
+        checking first if the user already exist
+    """
     def post(self, request):
         try:
+            username = request.data.get('username')
+            if User.objects.filter(username=username).exists():
+                return Response(
+                    {"error": "The Username already exist."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
             serializer = UserRegisterSerializer(data=request.data)
 
             if serializer.is_valid():
-                username = serializer.validated_data.get('username')
                 email = serializer.validated_data.get('email')
                 role = serializer.validated_data.get('role')
 
-                # Check if the user already exists
-                if User.objects.filter(username=username).exists():
-                    return Response(
-                        {"error": "The Username already exist."},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
                 if User.objects.filter(email=email).exists():
                     return Response(
                         {"error": "A user with this email already has an active account."},
