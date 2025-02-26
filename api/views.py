@@ -90,9 +90,8 @@ class LoginAPI(APIView):
             # Generate JWT tokens
             refresh = RefreshToken.for_user(user)
             return Response({
-                # "refresh": str(refresh),
-                # "access": str(refresh.access_token),
-                "tst": "hello"
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
