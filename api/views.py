@@ -14,12 +14,16 @@ from api.serializers import (
     RecordingSerializer, PaymentSerializer, MessageSerializer, NotificationSerializer
 )
 from django.db.models import Q
+from api.permissions import AllowAny
 
 User = get_user_model()
 
 # Authentication Views
 
 class RegisterAPI(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny] 
+    
     def post(self, request):
         try:
             serializer = UserRegisterSerializer(data=request.data)
@@ -66,6 +70,9 @@ class RegisterAPI(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LoginAPI(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny] 
+    
     def post(self, request):
         try:
             recv_data = request.data
@@ -79,7 +86,7 @@ class LoginAPI(APIView):
             # Attempt to find the user by username or email
             if '@' in username_or_email:  # If it's an email
                 logged_user = User.objects.filter(email=username_or_email).first()
-            else:  # If it's a username
+            else:  # If it's a username    
                 logged_user = User.objects.filter(username=username_or_email).first()
 
             if not logged_user:
@@ -98,6 +105,8 @@ class LoginAPI(APIView):
             return Response({
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "role": logged_user.role,
+                "username": logged_user.username
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
