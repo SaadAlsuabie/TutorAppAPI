@@ -20,6 +20,7 @@ User = get_user_model()
 # Authentication Views
 
 class RegisterAPI(APIView):
+    authentication_classes = []
     def post(self, request):
         try:
             serializer = UserRegisterSerializer(data=request.data)
@@ -60,6 +61,7 @@ class RegisterAPI(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LoginAPI(APIView):
+    authentication_classes = []
     def post(self, request):
         try:
             recv_data = request.data
