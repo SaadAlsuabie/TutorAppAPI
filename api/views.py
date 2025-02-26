@@ -14,6 +14,7 @@ from api.serializers import (
     RecordingSerializer, PaymentSerializer, MessageSerializer, NotificationSerializer
 )
 from django.db.models import Q
+from api.permissions import AllowAny
 
 User = get_user_model()
 
@@ -21,6 +22,8 @@ User = get_user_model()
 
 class RegisterAPI(APIView):
     authentication_classes = []
+    permission_classes = [AllowAny] 
+    
     def post(self, request):
         try:
             serializer = UserRegisterSerializer(data=request.data)
@@ -62,6 +65,8 @@ class RegisterAPI(APIView):
 
 class LoginAPI(APIView):
     authentication_classes = []
+    permission_classes = [AllowAny] 
+    
     def post(self, request):
         try:
             recv_data = request.data

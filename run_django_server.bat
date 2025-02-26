@@ -3,7 +3,7 @@ setlocal EnableDelayedExpansion
 
 echo Starting Django development server setup...
 
-:: Set the virtual environment name
+:: Set the virtual environment name 
 set VENV_NAME=venv 
 
 :: Get the directory where this batch file (and manage.py) is located
