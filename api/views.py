@@ -80,7 +80,7 @@ class LoginAPI(APIView):
             # Attempt to find the user by username or email
             if '@' in username_or_email:  # If it's an email
                 logged_user = User.objects.filter(email=username_or_email).first()
-            else:  # If it's a username
+            else:  # If it's a username    
                 logged_user = User.objects.filter(username=username_or_email).first()
 
             if not logged_user:
@@ -99,6 +99,7 @@ class LoginAPI(APIView):
             return Response({
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "role": logged_user.role
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
