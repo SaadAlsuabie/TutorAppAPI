@@ -99,7 +99,8 @@ class LoginAPI(APIView):
             return Response({
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
-                "role": logged_user.role
+                "role": logged_user.role,
+                "username": logged_user.username
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
