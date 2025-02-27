@@ -230,7 +230,8 @@ class RequestSessionAPI(APIView):
                 requested_time = requested_time,
                 defaults={"status": "pending"}
             )
-            return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
+            # return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Session request sent"}, status=status.HTTP_200_OK)
             
             serializer = SessionRequestSerializer(data=recvdata)
             if serializer.is_valid():
