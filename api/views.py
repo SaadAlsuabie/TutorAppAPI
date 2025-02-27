@@ -369,6 +369,7 @@ class SearchTutorsAPI(APIView):
                 res_data = [
                     {
                         "user": tutor.user.id,
+                        "name": f'{tutor.user.first_name} {tutor.user.last_name}',
                         "faculty":tutor.faculty,
                         "major": tutor.major,
                         "course":tutor.course,
