@@ -96,7 +96,8 @@ class SessionRequest(models.Model):
     ]
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='student_requests')
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_requests')
-    session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
+    # session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
+    session_type = models.TextField(null=True, blank=True)
     requested_time = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     decline_reason = models.TextField(null=True, blank=True)

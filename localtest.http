@@ -3,11 +3,11 @@ POST http://127.0.0.1:8000/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "John",
-    "fullname":"John Doe",
-    "email": "johndoe@tutor.example.com",
-    "password": "john123",
-    "role": "tutor",
+    "username": "james",
+    "fullname":"James Grey",
+    "email": "james@student.example.com",
+    "password": "james123",
+    "role": "student",
     "faculty": "Engineering",
     "major": "Computer Science",
     "yearleveltutor": "2",
@@ -19,8 +19,8 @@ POST http://127.0.0.1:8000/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username_or_email": "Robert",
-    "password": "robert123"
+    "username_or_email": "james",
+    "password": "james123"
 }
 
 ###
@@ -39,7 +39,7 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST http://127.0.0.1:8000/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer <your_access_token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTkyMDEzLCJpYXQiOjE3NDA2NTYwMTMsImp0aSI6IjAxMDQyNTc0NDdiMTQ4N2U5YmY0MWRlMTI3Nzg4MWI4IiwidXNlcl9pZCI6M30.uZLSie3OfqRKODU6oFHcTlrUd89MZnRia7z7-AM_-KA
 
 {
     "tutor": 2,

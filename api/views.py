@@ -201,12 +201,45 @@ class RequestSessionAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = SessionRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(student=request.user)
-            return Response({"message": "Session request sent", "request_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        try:
+            queries: dict = request.query_params
+            recvdata: dict = request.data
+            
+            user = request.user
+            if user.role != "student":
+                return Response({"Error":"A wrong user role."})
+            
+        
+            tutor_id = queries.get("tutor", '')
+            tutorID = recvdata.get("tutor", '')
+            session_type = recvdata.get("session_type", '')
+            requested_time = recvdata.get("requested_time", '')
+            tutor = User.objects.get(id=tutorID)
+            
+            if tutor and tutor.role == "tutor":
+                pass
+            else:
+                return Response({'error':'The user parsed is not a tutor'})
+            # print("Sessions: ", dict(SessionRequest.STATUS_CHOICES))
+            
+            SessionRequest.objects.update_or_create(
+                student = user,
+                tutor = tutor,
+                session_type = session_type,
+                requested_time = requested_time,
+                defaults={"status": "pending"}
+            )
+            return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
+            
+            serializer = SessionRequestSerializer(data=recvdata)
+            if serializer.is_valid():
+                serializer.save(student=request.user)
+                return Response({"message": "Session request sent", "request_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({"error":f"an error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 class LeaveFeedbackAPI(APIView):
     permission_classes = [IsAuthenticated]
 
