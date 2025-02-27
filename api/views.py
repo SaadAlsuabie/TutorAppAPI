@@ -24,9 +24,12 @@ User = get_user_model()
 class RegisterAPI(APIView):
     authentication_classes = []
     permission_classes = [AllowAny] 
-    
+    """
+        checking first if the user already exist
+    """
     def post(self, request):
         try:
+<<<<<<< HEAD
             request_data: dict = request.data
             role = request_data.get('role')
             
@@ -38,12 +41,21 @@ class RegisterAPI(APIView):
             }
             
             serializer = UserRegisterSerializer(data=toSerialize)
+=======
+            username = request.data.get('username')
+            if User.objects.filter(username=username).exists():
+                return Response(
+                    {"error": "The Username already exist."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+                
+            serializer = UserRegisterSerializer(data=request.data)
+>>>>>>> 8162b393c2e04c3707e4c3a7f09fd7ef1b9adc3a
 
             if serializer.is_valid():
                 email = serializer.validated_data.get('email')
                 role = serializer.validated_data.get('role')
 
-                # Check if the user already exists
                 if User.objects.filter(email=email).exists():
                     return Response(
                         {"error": "A user with this email already has an active account."},
@@ -117,7 +129,7 @@ class LoginAPI(APIView):
             # Attempt to find the user by username or email
             if '@' in username_or_email:  # If it's an email
                 logged_user = User.objects.filter(email=username_or_email).first()
-            else:  # If it's a username
+            else:  # If it's a username    
                 logged_user = User.objects.filter(username=username_or_email).first()
 
             if not logged_user:
@@ -136,6 +148,8 @@ class LoginAPI(APIView):
             return Response({
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
+                "role": logged_user.role,
+                "username": logged_user.username
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
