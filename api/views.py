@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
     Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
-    Faculty, Major
+    Faculty, Major, SessionType
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -338,42 +338,56 @@ class SearchTutorsAPI(APIView):
 
     def get(self, request):
         try:
+            all = request.query_params.get('all', '').strip().lower() == 'true'
             tutorname = request.query_params.get('tutorname', '')
             faculty = request.query_params.get('faculty', '')
             major = request.query_params.get('major', '')
             course = request.query_params.get('course', '')
            
-           
+            if all:
+               tutors = TutorProfile.objects.all()
             # if not tutorname and not faculty and not major and not course:
             #     tutors = TutorProfile.objects.all()
-                
-                
+            else:
             # else:
-            query = Q()
-            if tutorname:
-                query &= Q(user__first_name__icontains=tutorname) | Q(user__last_name__icontains=tutorname)
-                print("tutorname: ", tutorname)
-            if faculty:
-                query &= Q(faculty__icontains=faculty)
-                print("faculty: ", faculty)
-            if major:
-                query &= Q(major__icontains=major)
-                print("major: ", major)
-            if course:
-                query &= Q(course__icontains=course)
-                print("course: ", course)
-            tutors = TutorProfile.objects.filter(query)
-            
+                query = Q()
+                if tutorname:
+                    query &= Q(user__first_name__icontains=tutorname) | Q(user__last_name__icontains=tutorname)
+                    print("tutorname: ", tutorname)
+                if faculty:
+                    query &= Q(faculty__icontains=faculty)
+                    print("faculty: ", faculty)
+                if major:
+                    query &= Q(major__icontains=major)
+                    print("major: ", major)
+                if course:
+                    query &= Q(course__icontains=course)
+                    print("course: ", course)
+                tutors = TutorProfile.objects.filter(query)
+        
             if tutors.exists():
-                try:
-                    serializer = TutorProfileSerializer(tutors, many=True)
-                    res_data = serializer.data
-                except Exception as e:
-                    res_data = []
-                    print("Error: ", e)
+                res_data = [
+                    {
+                        "user": tutor.user.id,
+                        "faculty":tutor.faculty,
+                        "major": tutor.major,
+                        "course":tutor.course,
+                    }
+                    for tutor in tutors
+                ]
             else:
                 res_data = []
+                
+            sessions = SessionType.objects.all()
+            if not sessions.exists():
+                for key_, value_ in dict(SessionType.SESSION_CHOICES).items():
+                    SessionType.objects.update_or_create(
+                        name=value_
+                    )
             
-            return Response({"data":res_data}, status=status.HTTP_200_OK)
+            sessions_ = SessionType.objects.all()
+            sessions = [session.name for session in sessions_ if sessions_]
+            return Response({"data":res_data, "sessions":sessions}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"Error":e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

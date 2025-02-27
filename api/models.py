@@ -73,6 +73,11 @@ class TutorCourse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
 class SessionType(models.Model):
+    SESSION_CHOICES = [
+        ('one-on-one', 'One-on-One'), 
+        ('group', 'Group'), 
+        ('recorded', 'Recorded')
+    ]
     name = models.CharField(max_length=20, choices=[('one-on-one', 'One-on-One'), ('group', 'Group'), ('recorded', 'Recorded')])
     
 class TutorAvailability(models.Model):

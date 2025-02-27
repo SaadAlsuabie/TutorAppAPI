@@ -134,3 +134,8 @@ Authorization: Bearer <your_access_token>
 GET http://127.0.0.1:8000/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
 
+
+### Search tutors
+GET http://127.0.0.1:8000/search-tutors/?all=true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
+
