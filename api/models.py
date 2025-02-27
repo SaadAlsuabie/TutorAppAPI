@@ -10,6 +10,8 @@ class User(AbstractUser):
         ('tutor', 'Tutor'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
 
     # Override the groups and user_permissions fields to avoid clashes
     groups = models.ManyToManyField(
@@ -29,17 +31,23 @@ class User(AbstractUser):
     
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
-    major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    # faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
+    # major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    faculty = models.TextField(blank=True, null=True)
+    major = models.TextField(blank=True, null=True)
     academic_year = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
 class TutorProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
-    bio = models.TextField()
-    experience = models.TextField()
+    # faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
+    faculty = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    # major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    major = models.TextField(blank=True, null=True)
+    course = models.TextField(blank=True, null=True)
+    experience = models.TextField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     search_visibility = models.CharField(max_length=10, choices=[('standard', 'Standard'), ('premium', 'Premium')])
     created_at = models.DateTimeField(auto_now_add=True)

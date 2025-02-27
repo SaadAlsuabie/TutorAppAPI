@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
-    Recording, Payment, Message, Notification
+    Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
+    Faculty, Major
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -26,7 +27,17 @@ class RegisterAPI(APIView):
     
     def post(self, request):
         try:
-            serializer = UserRegisterSerializer(data=request.data)
+            request_data: dict = request.data
+            role = request_data.get('role')
+            
+            toSerialize = {
+                "username": request_data.get('username'),
+                "email": request_data.get('email'),
+                "password": request_data.get('password'),
+                "role": role,
+            }
+            
+            serializer = UserRegisterSerializer(data=toSerialize)
 
             if serializer.is_valid():
                 email = serializer.validated_data.get('email')
@@ -39,20 +50,46 @@ class RegisterAPI(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+                faculty = request_data.get("faculty")
+                major = request_data.get("major")
+                yearleveltutor = request_data.get("yearleveltutor")
+                yearlevelstudent = request_data.get("yearlevelstudent")
+                
                 # Validate email domain based on role
                 if role == 'student' and not email.endswith('@student.example.com'):
                     return Response(
                         {"error": "Student email must end with @student.example.com."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
+                
                 elif role == 'tutor' and not email.endswith('@tutor.example.com'):
                     return Response(
                         {"error": "Tutor email must end with @tutor.example.com."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-
                 # Save the user if all checks pass
                 user = serializer.save()
+                Faculty.objects.update_or_create(name=faculty)
+                facultyobj = Faculty.objects.get(name=faculty)
+                
+                
+                Major.objects.update_or_create(name=major, faculty=facultyobj)
+                
+                
+                if role == 'student':
+                    StudentProfile.objects.create(
+                        user=user,
+                        faculty=faculty,
+                        major=major,
+                        academic_year=yearlevelstudent,
+                    )
+                elif role == 'tutor': 
+                    TutorProfile.objects.create(
+                        user=user,
+                        faculty=faculty,
+                        major=major,
+                        is_verified = True
+                    )
                 return Response(
                     {"message": "User registered successfully", "user_id": user.id},
                     status=status.HTTP_201_CREATED
@@ -264,11 +301,43 @@ class SearchTutorsAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        query = request.query_params.get('query', '')
-        tutors = TutorProfile.objects.filter(
-            Q(user__first_name__icontains=query) |
-            Q(user__last_name__icontains=query) |
-            Q(bio__icontains=query)
-        )
-        serializer = TutorProfileSerializer(tutors, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            tutorname = request.query_params.get('tutorname', '')
+            faculty = request.query_params.get('faculty', '')
+            major = request.query_params.get('major', '')
+            course = request.query_params.get('course', '')
+           
+           
+            # if not tutorname and not faculty and not major and not course:
+            #     tutors = TutorProfile.objects.all()
+                
+                
+            # else:
+            query = Q()
+            if tutorname:
+                query &= Q(user__first_name__icontains=tutorname) | Q(user__last_name__icontains=tutorname)
+                print("tutorname: ", tutorname)
+            if faculty:
+                query &= Q(faculty__icontains=faculty)
+                print("faculty: ", faculty)
+            if major:
+                query &= Q(major__icontains=major)
+                print("major: ", major)
+            if course:
+                query &= Q(course__icontains=course)
+                print("course: ", course)
+            tutors = TutorProfile.objects.filter(query)
+            
+            if tutors.exists():
+                try:
+                    serializer = TutorProfileSerializer(tutors, many=True)
+                    res_data = serializer.data
+                except Exception as e:
+                    res_data = []
+                    print("Error: ", e)
+            else:
+                res_data = []
+            
+            return Response({"data":res_data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"Error":e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
