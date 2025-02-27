@@ -29,7 +29,6 @@ class RegisterAPI(APIView):
     """
     def post(self, request):
         try:
-<<<<<<< HEAD
             request_data: dict = request.data
             role = request_data.get('role')
             
@@ -41,16 +40,6 @@ class RegisterAPI(APIView):
             }
             
             serializer = UserRegisterSerializer(data=toSerialize)
-=======
-            username = request.data.get('username')
-            if User.objects.filter(username=username).exists():
-                return Response(
-                    {"error": "The Username already exist."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-                
-            serializer = UserRegisterSerializer(data=request.data)
->>>>>>> 8162b393c2e04c3707e4c3a7f09fd7ef1b9adc3a
 
             if serializer.is_valid():
                 email = serializer.validated_data.get('email')
