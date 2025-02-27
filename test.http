@@ -1,5 +1,5 @@
 ### Register a new user
-POST http://127.0.0.1:8000/register/ HTTP/1.1
+POST https://accentor490.pythonanywhere.com/register/ HTTP/1.1
 Content-Type: application/json
 
 {
@@ -15,7 +15,7 @@ Content-Type: application/json
 }
 
 ### Login a user
-POST http://127.0.0.1:8000/login/ HTTP/1.1
+POST https://accentor490.pythonanywhere.com/login/ HTTP/1.1
 Content-Type: application/json
 
 {
