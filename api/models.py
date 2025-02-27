@@ -12,6 +12,8 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
+    full_name = models.CharField(max_length=100, blank=True, null=True)
+    
 
     # Override the groups and user_permissions fields to avoid clashes
     groups = models.ManyToManyField(

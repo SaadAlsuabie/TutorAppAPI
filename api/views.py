@@ -34,6 +34,7 @@ class RegisterAPI(APIView):
             
             toSerialize = {
                 "username": request_data.get('username'),
+                "full_name":request_data.get("fullname", ''),
                 "email": request_data.get('email'),
                 "password": request_data.get('password'),
                 "role": role,
@@ -369,7 +370,7 @@ class SearchTutorsAPI(APIView):
                 res_data = [
                     {
                         "user": tutor.user.id,
-                        "name": f'{tutor.user.first_name} {tutor.user.last_name}',
+                        "name": f'{tutor.user.full_name}',
                         "faculty":tutor.faculty,
                         "major": tutor.major,
                         "course":tutor.course,
