@@ -54,7 +54,7 @@ class RegisterAPI(APIView):
 
                 faculty = request_data.get("faculty")
                 major = request_data.get("major")
-                courses = request_data.get("courses", '')
+                courses = request_data.get("courses")
                 yearleveltutor = request_data.get("yearleveltutor")
                 yearlevelstudent = request_data.get("yearlevelstudent")
                 
@@ -86,6 +86,7 @@ class RegisterAPI(APIView):
                         faculty=faculty,
                         major=major,
                         academic_year=yearlevelstudent,
+                        course=courses
                     )
                 elif role == 'tutor': 
                     TutorProfile.objects.create(
@@ -93,7 +94,8 @@ class RegisterAPI(APIView):
                         faculty=faculty,
                         major=major,
                         is_verified = True,
-                        year_level = yearleveltutor
+                        year_level = yearleveltutor,
+                        course=courses
                     )
                 return Response(
                     {"message": "User registered successfully", "user_id": user.id},
