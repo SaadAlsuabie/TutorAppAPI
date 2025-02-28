@@ -30,21 +30,21 @@ class RegisterAPI(APIView):
     def post(self, request):
         try:
             request_data: dict = request.data
-            role = request_data.get('role')
+            role = request_data.get('role').strip().lower()
             
             toSerialize = {
-                "username": request_data.get('username'),
-                "full_name":request_data.get("fullname", ''),
-                "email": request_data.get('email'),
-                "password": request_data.get('password'),
+                "username": request_data.get('username').strip().lower(),
+                "full_name":request_data.get("fullname", '').strip().lower(),
+                "email": request_data.get('email').strip().lower(),
+                "password": request_data.get('password').strip().lower(),
                 "role": role,
             }
             
             serializer = UserRegisterSerializer(data=toSerialize)
 
             if serializer.is_valid():
-                email = serializer.validated_data.get('email')
-                role = serializer.validated_data.get('role')
+                email = serializer.validated_data.get('email').strip().lower()
+                role = serializer.validated_data.get('role').strip().lower()
 
                 if User.objects.filter(email=email).exists():
                     return Response(
@@ -52,11 +52,11 @@ class RegisterAPI(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-                faculty = request_data.get("faculty")
-                major = request_data.get("major")
-                courses = request_data.get("courses")
-                yearleveltutor = request_data.get("yearleveltutor")
-                yearlevelstudent = request_data.get("yearlevelstudent")
+                faculty = request_data.get("faculty").strip().lower()
+                major = request_data.get("major").strip().lower()
+                courses = request_data.get("courses").strip().lower()
+                yearleveltutor = request_data.get("yearleveltutor").strip().lower()
+                yearlevelstudent = request_data.get("yearlevelstudent").strip().lower()
                 
                 # Validate email domain based on role
                 if role == 'student' and not email.endswith('@student.example.com'):
@@ -115,8 +115,8 @@ class LoginAPI(APIView):
         try:
             recv_data = request.data
             logged_user = None
-            username_or_email = recv_data.get('username_or_email', '')
-            password = recv_data.get('password', '')
+            username_or_email = recv_data.get('username_or_email', '').strip().lower()
+            password = recv_data.get('password', '').strip().lower()
 
             if not username_or_email or not password:
                 return Response({"error": "Username/email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
