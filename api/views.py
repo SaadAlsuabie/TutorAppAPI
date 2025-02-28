@@ -54,6 +54,7 @@ class RegisterAPI(APIView):
 
                 faculty = request_data.get("faculty")
                 major = request_data.get("major")
+                courses = request_data.get("courses", '')
                 yearleveltutor = request_data.get("yearleveltutor")
                 yearlevelstudent = request_data.get("yearlevelstudent")
                 
@@ -69,6 +70,7 @@ class RegisterAPI(APIView):
                         {"error": "Tutor email must end with @tutor.example.com."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
+                    
                 # Save the user if all checks pass
                 user = serializer.save()
                 Faculty.objects.update_or_create(name=faculty)
@@ -90,7 +92,8 @@ class RegisterAPI(APIView):
                         user=user,
                         faculty=faculty,
                         major=major,
-                        is_verified = True
+                        is_verified = True,
+                        year_level = yearleveltutor
                     )
                 return Response(
                     {"message": "User registered successfully", "user_id": user.id},
@@ -198,6 +201,69 @@ class BrowseTutorsAPI(APIView):
         serializer = TutorProfileSerializer(tutors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class RequestSessionListAPI(APIView): 
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            queries: dict = request.query_params
+            path = queries.get("query", '')
+            user = request.user
+            
+            if path == "pending":
+                if user.role == "tutor":
+                    reqs = SessionRequest.objects.filter(tutor=user, status="Pending")
+                else:
+                    return Response({"error": "The user is forbidden"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                resp_list = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id
+                    }
+                    for req in reqs
+                ]
+            elif path == "accepted":
+                if user.role == "tutor":
+                    reqs = SessionRequest.objects.filter(tutor=user, status="Accepted")
+                else:
+                    return Response({"error": "The user is forbidden"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                resp_list = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id
+                    }
+                    for req in reqs
+                ]
+            else:
+                resp_list = []
+                
+            return Response({"data": resp_list}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def post(self, request):
+        try:
+            data: dict = request.data
+            
+            session_id = data.get("requestID", '')
+            session = SessionRequest.objects.get(id=session_id)
+            if session:
+                session.status = "Accepted"
+                session.save()
+                return Response({"message": "Request accepted"})
+            else:
+                return Response({"error": "The request id not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+        except Exception as e:
+            return Response({"error": "INTERNAL SERVER ERROR"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 class RequestSessionAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -215,6 +281,7 @@ class RequestSessionAPI(APIView):
             tutorID = recvdata.get("tutor", '')
             session_type = recvdata.get("session_type", '')
             requested_time = recvdata.get("requested_time", '')
+            message = recvdata.get("message", '')
             tutor = User.objects.get(id=tutorID)
             
             if tutor and tutor.role == "tutor":
@@ -228,7 +295,8 @@ class RequestSessionAPI(APIView):
                 tutor = tutor,
                 session_type = session_type,
                 requested_time = requested_time,
-                defaults={"status": "pending"}
+                defaults={"status": "pending"},
+                message = message
             )
             # return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
             return Response({"message": "Session request sent"}, status=status.HTTP_200_OK)

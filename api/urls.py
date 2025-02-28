@@ -4,7 +4,7 @@ from .views import (
     BrowseTutorsAPI, RequestSessionAPI, LeaveFeedbackAPI,
     SetAvailabilityAPI, AcceptDeclineSessionAPI, UploadRecordingAPI,
     MakePaymentAPI, SendMessageAPI, GetMessagesAPI,
-    GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView
+    GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, RequestSessionListAPI
 )
 
 urlpatterns = [
@@ -17,9 +17,10 @@ urlpatterns = [
     path('browse-tutors/', BrowseTutorsAPI.as_view(), name='browse-tutors'),
     path('request-session/', RequestSessionAPI.as_view(), name='request-session'),
     path('leave-feedback/', LeaveFeedbackAPI.as_view(), name='leave-feedback'),
-
+ 
     # Tutor Path
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),
+    path('request-session-listings/', RequestSessionListAPI.as_view(), name='request-session-list'),
     path('accept-decline-session/<int:request_id>/', AcceptDeclineSessionAPI.as_view(), name='accept-decline-session'),
     path('upload-recording/', UploadRecordingAPI.as_view(), name='upload-recording'),
 
