@@ -267,7 +267,7 @@ class AcceptDeclineSessionAPI(APIView):
     permission_classes = [IsAuthenticated]
  
     def patch(self, request, request_id):
-        try:
+        try: 
             session_request = SessionRequest.objects.get(id=request_id, tutor=request.user)
         except SessionRequest.DoesNotExist:
             return Response({"error": "Session request not found"}, status=status.HTTP_404_NOT_FOUND)
