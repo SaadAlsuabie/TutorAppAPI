@@ -198,9 +198,9 @@ class SetAvailabilityAPI(APIView):
             return Response({"message": "Availability set", "availability_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class AcceptDeclineSessionAPI(APIView):
+class AcceptDeclineSessionAPI(APIView): 
     permission_classes = [IsAuthenticated]
-
+ 
     def patch(self, request, request_id):
         try:
             session_request = SessionRequest.objects.get(id=request_id, tutor=request.user)
