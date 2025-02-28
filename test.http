@@ -3,10 +3,15 @@ POST https://accentor490.pythonanywhere.com/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testuser2",
-    "email": "testuser2@tutor.example.com",
-    "password": "StrongPassword123",
-    "role": "tutor"
+    "username": "james",
+    "fullname":"James Grey",
+    "email": "james@student.example.com",
+    "password": "james123",
+    "role": "student",
+    "faculty": "Engineering",
+    "major": "Computer Science",
+    "yearleveltutor": "2",
+    "yearlevelstudent": "1"
 }
 
 ### Login a user
@@ -14,10 +19,9 @@ POST https://accentor490.pythonanywhere.com/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username_or_email": "testuser",
-    "password": "StrongPassword123"
+    "username_or_email": "james",
+    "password": "james123"
 }
-
 ###
 POST https://accentor490.pythonanywhere.com/logout/ HTTP/1.1
 Content-Type: application/json
@@ -34,7 +38,7 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST https://accentor490.pythonanywhere.com/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer <your_access_token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTk0NTM0LCJpYXQiOjE3NDA2NTg1MzQsImp0aSI6ImJjZjcwZmY2YjdkNTRjN2U5MzlhOTAxMjQ3MTlkMzZjIiwidXNlcl9pZCI6M30.eAqpq8P8l8haLFfdSRnwIQNS2qIJjE_OiLSng-rtcKo
 
 {
     "tutor": 2,
@@ -126,5 +130,5 @@ GET https://accentor490.pythonanywhere.com/get-notifications/ HTTP/1.1
 Authorization: Bearer <your_access_token>
 
 ### Search tutors
-GET https://accentor490.pythonanywhere.com/search-tutors/?query=math HTTP/1.1
-Authorization: Bearer <your_access_token>
+GET https://accentor490.pythonanywhere.com/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTk0NTM0LCJpYXQiOjE3NDA2NTg1MzQsImp0aSI6ImJjZjcwZmY2YjdkNTRjN2U5MzlhOTAxMjQ3MTlkMzZjIiwidXNlcl9pZCI6M30.eAqpq8P8l8haLFfdSRnwIQNS2qIJjE_OiLSng-rtcKo

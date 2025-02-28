@@ -35,4 +35,4 @@ urlpatterns = [
 
     # Search
     path('search-tutors/', SearchTutorsAPI.as_view(), name='search-tutors'),
-]
+] 

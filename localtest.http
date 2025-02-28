@@ -3,10 +3,15 @@ POST http://127.0.0.1:8000/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testuser",
-    "email": "testuser@student.example.com",
-    "password": "StrongPassword123", 
-    "role": "student"
+    "username": "Sewell",
+    "fullname":"Sewell Clarke",
+    "email": "sewell@tutor.example.com",
+    "password": "sewell123",
+    "role": "tutor",
+    "faculty": "Engineering",
+    "major": "Computer Science",
+    "yearleveltutor": "2",
+    "yearlevelstudent": "1"
 }
 
 ### Login a user
@@ -14,8 +19,8 @@ POST http://127.0.0.1:8000/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username_or_email": "testuser",
-    "password": "StrongPassword123"
+    "username_or_email": "james",
+    "password": "james123"
 }
 
 ###
@@ -34,7 +39,7 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST http://127.0.0.1:8000/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer <your_access_token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTkyMDEzLCJpYXQiOjE3NDA2NTYwMTMsImp0aSI6IjAxMDQyNTc0NDdiMTQ4N2U5YmY0MWRlMTI3Nzg4MWI4IiwidXNlcl9pZCI6M30.uZLSie3OfqRKODU6oFHcTlrUd89MZnRia7z7-AM_-KA
 
 {
     "tutor": 2,
@@ -126,5 +131,11 @@ GET http://127.0.0.1:8000/get-notifications/ HTTP/1.1
 Authorization: Bearer <your_access_token>
 
 ### Search tutors
-GET http://127.0.0.1:8000/search-tutors/?query=math HTTP/1.1
-Authorization: Bearer <your_access_token>
+GET http://127.0.0.1:8000/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
+
+
+### Search tutors
+GET http://127.0.0.1:8000/search-tutors/?all=true HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
+

@@ -6,7 +6,8 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
-    Recording, Payment, Message, Notification
+    Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
+    Faculty, Major, SessionType
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -28,14 +29,18 @@ class RegisterAPI(APIView):
     """
     def post(self, request):
         try:
-            username = request.data.get('username')
-            if User.objects.filter(username=username).exists():
-                return Response(
-                    {"error": "The Username already exist."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-                
-            serializer = UserRegisterSerializer(data=request.data)
+            request_data: dict = request.data
+            role = request_data.get('role')
+            
+            toSerialize = {
+                "username": request_data.get('username'),
+                "full_name":request_data.get("fullname", ''),
+                "email": request_data.get('email'),
+                "password": request_data.get('password'),
+                "role": role,
+            }
+            
+            serializer = UserRegisterSerializer(data=toSerialize)
 
             if serializer.is_valid():
                 email = serializer.validated_data.get('email')
@@ -47,20 +52,46 @@ class RegisterAPI(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+                faculty = request_data.get("faculty")
+                major = request_data.get("major")
+                yearleveltutor = request_data.get("yearleveltutor")
+                yearlevelstudent = request_data.get("yearlevelstudent")
+                
                 # Validate email domain based on role
                 if role == 'student' and not email.endswith('@student.example.com'):
                     return Response(
                         {"error": "Student email must end with @student.example.com."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
+                
                 elif role == 'tutor' and not email.endswith('@tutor.example.com'):
                     return Response(
                         {"error": "Tutor email must end with @tutor.example.com."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-
                 # Save the user if all checks pass
                 user = serializer.save()
+                Faculty.objects.update_or_create(name=faculty)
+                facultyobj = Faculty.objects.get(name=faculty)
+                
+                
+                Major.objects.update_or_create(name=major, faculty=facultyobj)
+                
+                
+                if role == 'student':
+                    StudentProfile.objects.create(
+                        user=user,
+                        faculty=faculty,
+                        major=major,
+                        academic_year=yearlevelstudent,
+                    )
+                elif role == 'tutor': 
+                    TutorProfile.objects.create(
+                        user=user,
+                        faculty=faculty,
+                        major=major,
+                        is_verified = True
+                    )
                 return Response(
                     {"message": "User registered successfully", "user_id": user.id},
                     status=status.HTTP_201_CREATED
@@ -171,12 +202,46 @@ class RequestSessionAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = SessionRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(student=request.user)
-            return Response({"message": "Session request sent", "request_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        try:
+            queries: dict = request.query_params
+            recvdata: dict = request.data
+            
+            user = request.user
+            if user.role != "student":
+                return Response({"Error":"A wrong user role."})
+            
+        
+            tutor_id = queries.get("tutor", '')
+            tutorID = recvdata.get("tutor", '')
+            session_type = recvdata.get("session_type", '')
+            requested_time = recvdata.get("requested_time", '')
+            tutor = User.objects.get(id=tutorID)
+            
+            if tutor and tutor.role == "tutor":
+                pass
+            else:
+                return Response({'error':'The user parsed is not a tutor'})
+            # print("Sessions: ", dict(SessionRequest.STATUS_CHOICES))
+            
+            SessionRequest.objects.update_or_create(
+                student = user,
+                tutor = tutor,
+                session_type = session_type,
+                requested_time = requested_time,
+                defaults={"status": "pending"}
+            )
+            # return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
+            return Response({"message": "Session request sent"}, status=status.HTTP_200_OK)
+            
+            serializer = SessionRequestSerializer(data=recvdata)
+            if serializer.is_valid():
+                serializer.save(student=request.user)
+                return Response({"message": "Session request sent", "request_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({"error":f"an error occurred {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 class LeaveFeedbackAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -274,11 +339,58 @@ class SearchTutorsAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        query = request.query_params.get('query', '')
-        tutors = TutorProfile.objects.filter(
-            Q(user__first_name__icontains=query) |
-            Q(user__last_name__icontains=query) |
-            Q(bio__icontains=query)
-        )
-        serializer = TutorProfileSerializer(tutors, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            all = request.query_params.get('all', '').strip().lower() == 'true'
+            tutorname = request.query_params.get('tutorname', '')
+            faculty = request.query_params.get('faculty', '')
+            major = request.query_params.get('major', '')
+            course = request.query_params.get('course', '')
+           
+            if all:
+               tutors = TutorProfile.objects.all()
+            # if not tutorname and not faculty and not major and not course:
+            #     tutors = TutorProfile.objects.all()
+            else:
+            # else:
+                query = Q()
+                if tutorname:
+                    query &= Q(user__first_name__icontains=tutorname) | Q(user__last_name__icontains=tutorname)
+                    print("tutorname: ", tutorname)
+                if faculty:
+                    query &= Q(faculty__icontains=faculty)
+                    print("faculty: ", faculty)
+                if major:
+                    query &= Q(major__icontains=major)
+                    print("major: ", major)
+                if course:
+                    query &= Q(course__icontains=course)
+                    print("course: ", course)
+                tutors = TutorProfile.objects.filter(query)
+        
+            if tutors.exists():
+                res_data = [
+                    {
+                        "user": tutor.user.id,
+                        "name": f'{tutor.user.full_name}',
+                        "faculty":tutor.faculty,
+                        "major": tutor.major,
+                        "course":tutor.course,
+                    }
+                    for tutor in tutors
+                ]
+            else:
+                res_data = []
+                
+            sessions = SessionType.objects.all()
+            if not sessions.exists():
+                for key_, value_ in dict(SessionType.SESSION_CHOICES).items():
+                    SessionType.objects.update_or_create(
+                        name=value_
+                    )
+            
+            sessions_ = SessionType.objects.all()
+            sessions = [session.name for session in sessions_ if sessions_]
+            return Response({"data":res_data, "sessions":sessions}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"Error":e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
