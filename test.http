@@ -3,11 +3,11 @@ POST https://accentor490.pythonanywhere.com/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "Robert",
-    "fullname":"Robert Hamburger",
-    "email": "Robert@student.example.com",
+    "username": "Eleanor",
+    "fullname":"Eleanor Jane",
+    "email": "eleanor@tutor.example.com",
     "password": "1234",
-    "role": "student",
+    "role": "tutor",
     "faculty": "Engineering",
     "major": "Computer Science",
     "yearleveltutor": "2",
@@ -20,13 +20,13 @@ POST https://accentor490.pythonanywhere.com/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username_or_email": "Sandy",
+    "username_or_email": "eleanor",
     "password": "1234"
 }
 ###
 POST https://accentor490.pythonanywhere.com/logout/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwNDY5NjM3LCJpYXQiOjE3NDA0NjkzMzcsImp0aSI6IjliYTg1OGUzZTI4MDQ4YTFhMzhjYTBjZWU3MGU3OTMyIiwidXNlcl9pZCI6MX0.9LeR0yLaXmEgY876R8a0yL25F-1Ogw_lHmQRh4dOn78
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc
 
 {
     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MDU1NTczNywiaWF0IjoxNzQwNDY5MzM3LCJqdGkiOiIwZTU5NmMyYWU5N2Y0NjE3YjM3MDZhMDdkN2I0MGJhNiIsInVzZXJfaWQiOjF9.__J7Wr-FWSqGoSxp1rSSYgxRVqcCrjraisYeyILpidI",
@@ -39,7 +39,7 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST https://accentor490.pythonanywhere.com/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTk0NTM0LCJpYXQiOjE3NDA2NTg1MzQsImp0aSI6ImJjZjcwZmY2YjdkNTRjN2U5MzlhOTAxMjQ3MTlkMzZjIiwidXNlcl9pZCI6M30.eAqpq8P8l8haLFfdSRnwIQNS2qIJjE_OiLSng-rtcKo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc
 
 {
     "tutor": 2,
@@ -50,17 +50,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Tutor pending session listings
 GET https://accentor490.pythonanywhere.com/request-session-listings/?query=pending HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk2ODE2LCJpYXQiOjE3NDA3NjA4MTYsImp0aSI6IjBjM2NmM2Y1OTJkNzRhMTliY2NkNGY3YzNkMDExNjUzIiwidXNlcl9pZCI6OH0.vS0gXyv6DWyCpTr3wCK_w6GsgdihzJZ5pVUh6dYCd3Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
 
 ### Tutor accepted session listings
 GET https://accentor490.pythonanywhere.com/request-session-listings/?query=accepted HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk2ODE2LCJpYXQiOjE3NDA3NjA4MTYsImp0aSI6IjBjM2NmM2Y1OTJkNzRhMTliY2NkNGY3YzNkMDExNjUzIiwidXNlcl9pZCI6OH0.vS0gXyv6DWyCpTr3wCK_w6GsgdihzJZ5pVUh6dYCd3Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
 
 ### Request a session with a tutor
 POST https://accentor490.pythonanywhere.com/request-session-listings/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk2ODE2LCJpYXQiOjE3NDA3NjA4MTYsImp0aSI6IjBjM2NmM2Y1OTJkNzRhMTliY2NkNGY3YzNkMDExNjUzIiwidXNlcl9pZCI6OH0.vS0gXyv6DWyCpTr3wCK_w6GsgdihzJZ5pVUh6dYCd3Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
 
 {
     "requestID": "1",
@@ -151,4 +151,4 @@ Authorization: Bearer <your_access_token>
 
 ### Search tutors
 GET https://accentor490.pythonanywhere.com/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTk0NTM0LCJpYXQiOjE3NDA2NTg1MzQsImp0aSI6ImJjZjcwZmY2YjdkNTRjN2U5MzlhOTAxMjQ3MTlkMzZjIiwidXNlcl9pZCI6M30.eAqpq8P8l8haLFfdSRnwIQNS2qIJjE_OiLSng-rtcKo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc

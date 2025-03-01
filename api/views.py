@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
     Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
-    Faculty, Major, SessionType
+    Faculty, Major, SessionType, Chats, Message
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -34,7 +34,7 @@ class RegisterAPI(APIView):
             
             toSerialize = {
                 "username": request_data.get('username').strip().lower(),
-                "full_name":request_data.get("fullname", '').strip().lower(),
+                "full_name":request_data.get("fullname").strip().lower(),
                 "email": request_data.get('email').strip().lower(),
                 "password": request_data.get('password').strip().lower(),
                 "role": role,
@@ -115,12 +115,15 @@ class LoginAPI(APIView):
         try:
             recv_data = request.data
             logged_user = None
-            username_or_email = recv_data.get('username_or_email', '').strip().lower()
-            password = recv_data.get('password', '').strip().lower()
+            username_or_email: str = recv_data.get('username_or_email', '').strip().lower()
+            username_or_email = username_or_email.strip().lower()
+            password: str = recv_data.get('password', '').strip().lower()
+            password = password.strip().lower()
 
             if not username_or_email or not password:
                 return Response({"error": "Username/email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
-
+            print("username: ", username_or_email)
+            print("password: ", password)
             # Attempt to find the user by username or email
             if '@' in username_or_email:  # If it's an email
                 logged_user = User.objects.filter(email=username_or_email).first()
@@ -211,9 +214,11 @@ class RequestSessionListAPI(APIView):
             path = queries.get("query", '')
             user = request.user
             
-            if path == "pending":
+            print("path: ", path)
+            if path.lower() == "pending":
                 if user.role == "tutor":
-                    reqs = SessionRequest.objects.filter(tutor=user, status="Pending")
+                    reqs = SessionRequest.objects.filter(tutor=user, status="pending")
+                    
                 else:
                     return Response({"error": "The user is forbidden"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 resp_list = [
@@ -223,11 +228,13 @@ class RequestSessionListAPI(APIView):
                         "course": StudentProfile.objects.get(user=req.student).course,
                         "message":req.message,
                         "request_date":req.requested_time,
-                        "request_id":req.id
+                        "request_id":req.id,
+                        "tutor":req.tutor.username,
+                        "status":req.status
                     }
                     for req in reqs
                 ]
-            elif path == "accepted":
+            elif path.lower() == "accepted":
                 if user.role == "tutor":
                     reqs = SessionRequest.objects.filter(tutor=user, status="Accepted")
                 else:
@@ -239,7 +246,8 @@ class RequestSessionListAPI(APIView):
                         "course": StudentProfile.objects.get(user=req.student).course,
                         "message":req.message,
                         "request_date":req.requested_time,
-                        "request_id":req.id
+                        "request_id":req.id,
+                        "student":req.student.id
                     }
                     for req in reqs
                 ]
@@ -254,17 +262,21 @@ class RequestSessionListAPI(APIView):
         try:
             data: dict = request.data
             
-            session_id = data.get("requestID", '')
-            session = SessionRequest.objects.get(id=session_id)
-            if session:
-                session.status = "Accepted"
-                session.save()
+            session_id = data.get('request_session_id', '')
+            sessions = SessionRequest.objects.filter(id=session_id)
+            if sessions:
+                for session in sessions:
+                    session.status = "Accepted"
+                    session.save()
+                    Chats.objects.update_or_create(user=request.user, session=session)
+                    
+                    
                 return Response({"message": "Request accepted"})
             else:
                 return Response({"error": "The request id not found"}, status=status.HTTP_404_NOT_FOUND)
             
         except Exception as e:
-            return Response({"error": "INTERNAL SERVER ERROR"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"INTERNAL SERVER ERROR: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class RequestSessionAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -292,12 +304,12 @@ class RequestSessionAPI(APIView):
                 return Response({'error':'The user parsed is not a tutor'})
             # print("Sessions: ", dict(SessionRequest.STATUS_CHOICES))
             
-            SessionRequest.objects.update_or_create(
+            SessionRequest.objects.create(
                 student = user,
                 tutor = tutor,
                 session_type = session_type,
                 requested_time = requested_time,
-                defaults={"status": "pending"},
+                status="pending",
                 message = message
             )
             # return Response({"message": "Session request sent"}, status=status.HTTP_201_CREATED)
@@ -389,10 +401,52 @@ class GetMessagesAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_id = request.user.id
-        messages = Message.objects.filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        queries: dict = request.query_params
+        user = request.user
+        
+        ret_resp = []
+        chats_dict = {}
+        
+        query = queries.get("query", '')
+        if query.lower() == "all":
+            ret_resp = []
+            chats = Chats.objects.filter(user=user)
+            for chat in chats:
+                chats_dict = {}
+                message = Message.objects.filter(chat=chat, receiver=user).last()
+                if message:
+                    chats_dict['full_name'] = chat.user.full_name
+                    chats_dict['message'] = message.content
+                    chats_dict['time'] = message.timestamp
+                else:
+                    chats_dict['full_name'] = chat.user.full_name
+                    chats_dict['message'] = "No message"
+                    chats_dict['time'] = "N/A"
+                    
+                ret_resp.append(chats_dict)
+        else:
+            ret_resp = []
+            request_id = query
+            session_ = SessionRequest.objects.filter(id=request_id)
+            if session_.exists():
+                for session in session_:
+                    chats = Chats.objects.filter(user=user, session=session)
+                    for chat in chats:
+                        messages = Message.objects.filter(chat=chat)
+                        for message in messages:
+                            chats_dict = {}
+                            chats_dict['sender'] = message.sender
+                            if message.receiver == user:
+                                chats_dict['receiver'] = "me"
+                                
+                            chats_dict['content'] = message.content
+                            
+                            ret_resp.append(chats_dict)
+                
+            else:
+                return Response({"error": "The requested chat does not exist"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({"data": ret_resp}, status=status.HTTP_200_OK)
 
 # Notification Views
 class GetNotificationsAPI(APIView):
