@@ -43,8 +43,8 @@ class RegisterAPI(APIView):
             serializer = UserRegisterSerializer(data=toSerialize)
 
             if serializer.is_valid():
-                email = serializer.validated_data.get('email').strip().lower()
-                role = serializer.validated_data.get('role').strip().lower()
+                email = serializer.validated_data.get('email')
+                role = serializer.validated_data.get('role')
 
                 if User.objects.filter(email=email).exists():
                     return Response(
@@ -115,15 +115,19 @@ class LoginAPI(APIView):
         try:
             recv_data = request.data
             logged_user = None
-            username_or_email: str = recv_data.get('username_or_email', '').strip().lower()
+            username_or_email: str = recv_data.get('username_or_email').strip().lower()
             username_or_email = username_or_email.strip().lower()
             password: str = recv_data.get('password', '').strip().lower()
             password = password.strip().lower()
+            
+            data = {
+                "username_or_email": username_or_email,
+                "password": password
+            }
 
             if not username_or_email or not password:
                 return Response({"error": "Username/email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
-            print("username: ", username_or_email)
-            print("password: ", password)
+            
             # Attempt to find the user by username or email
             if '@' in username_or_email:  # If it's an email
                 logged_user = User.objects.filter(email=username_or_email).first()
@@ -134,7 +138,7 @@ class LoginAPI(APIView):
                 return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
             # Validate the serializer
-            serializer = UserLoginSerializer(data=request.data, context={'request': request})
+            serializer = UserLoginSerializer(data=data, context={'request': request})
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
