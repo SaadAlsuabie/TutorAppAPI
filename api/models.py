@@ -10,6 +10,10 @@ class User(AbstractUser):
         ('tutor', 'Tutor'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    full_name = models.CharField(max_length=100, blank=True, null=True)
+    
 
     # Override the groups and user_permissions fields to avoid clashes
     groups = models.ManyToManyField(
@@ -29,17 +33,25 @@ class User(AbstractUser):
     
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
-    major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    # faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
+    # major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    faculty = models.TextField(blank=True, null=True)
+    course = models.TextField(blank=True, null=True)
+    major = models.TextField(blank=True, null=True)
     academic_year = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
 class TutorProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
-    bio = models.TextField()
-    experience = models.TextField()
+    # faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
+    faculty = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    # major = models.ForeignKey('Major', on_delete=models.CASCADE)
+    major = models.TextField(blank=True, null=True)
+    year_level = models.TextField(blank=True, null=True)
+    course = models.TextField(blank=True, null=True)
+    experience = models.TextField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     search_visibility = models.CharField(max_length=10, choices=[('standard', 'Standard'), ('premium', 'Premium')])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -65,7 +77,15 @@ class TutorCourse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
 class SessionType(models.Model):
+    SESSION_CHOICES = [
+        ('one-on-one', 'One-on-One'), 
+        ('group', 'Group'), 
+        ('recorded', 'Recorded')
+    ]
     name = models.CharField(max_length=20, choices=[('one-on-one', 'One-on-One'), ('group', 'Group'), ('recorded', 'Recorded')])
+    
+    def __str__(self):
+        return self.name
     
 class TutorAvailability(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -79,7 +99,8 @@ class TutorPricing(models.Model):
     session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+
 class SessionRequest(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -88,11 +109,19 @@ class SessionRequest(models.Model):
     ]
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='student_requests')
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_requests')
-    session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
+    # session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
+    session_type = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
     requested_time = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     decline_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+class Chats(models.Model):
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tutor')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_student')
+    session = models.ForeignKey(SessionRequest, on_delete=models.CASCADE)
+    
     
 class ScheduledSession(models.Model):
     PAYMENT_STATUS_CHOICES = [
@@ -142,11 +171,13 @@ class PurchasedRecording(models.Model):
     purchase_date = models.DateTimeField(auto_now_add=True)
     
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)
+    sender = models.CharField(max_length=250, null=True, blank=True)
+    receiver = models.CharField(max_length=250, null=True, blank=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    read_status = models.BooleanField(default=False)
+    read_status_tutor = models.BooleanField(default=False)
+    read_status_student = models.BooleanField(default=False)
     
 class Notification(models.Model):
     NOTIFICATION_TYPES = [

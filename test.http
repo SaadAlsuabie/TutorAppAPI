@@ -3,25 +3,30 @@ POST https://accentor490.pythonanywhere.com/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "testuser22",
-    "email": "testuser2@tutor.example.com",
-    "password": "StrongPassword123",
-    "role": "tutor"
-}
+    "username": "Eleanor",
+    "fullname":"Eleanor Jane",
+    "email": "eleanor@tutor.example.com",
+    "password": "1234",
+    "role": "tutor",
+    "faculty": "Engineering",
+    "major": "Computer Science",
+    "yearleveltutor": "2",
+    "yearlevelstudent": "1",
+    "courses": "COMP 123"
+} 
 
 ### Login a user
 POST https://accentor490.pythonanywhere.com/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username_or_email": "testuser",
-    "password": "StrongPassword123"
+    "username_or_email": "eleanor",
+    "password": "1234"
 }
-
 ###
 POST https://accentor490.pythonanywhere.com/logout/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwNDY5NjM3LCJpYXQiOjE3NDA0NjkzMzcsImp0aSI6IjliYTg1OGUzZTI4MDQ4YTFhMzhjYTBjZWU3MGU3OTMyIiwidXNlcl9pZCI6MX0.9LeR0yLaXmEgY876R8a0yL25F-1Ogw_lHmQRh4dOn78
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc
 
 {
     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MDU1NTczNywiaWF0IjoxNzQwNDY5MzM3LCJqdGkiOiIwZTU5NmMyYWU5N2Y0NjE3YjM3MDZhMDdkN2I0MGJhNiIsInVzZXJfaWQiOjF9.__J7Wr-FWSqGoSxp1rSSYgxRVqcCrjraisYeyILpidI",
@@ -34,12 +39,31 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST https://accentor490.pythonanywhere.com/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer <your_access_token>
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc
 
 {
     "tutor": 2,
     "session_type": 1,
-    "requested_time": "2023-10-15T14:00:00Z"
+    "requested_time": "2023-10-15T14:00:00Z",
+    "message": "I have problem with calculus"
+}
+### Tutor pending session listings
+GET https://accentor490.pythonanywhere.com/request-session-listings/?query=pending HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
+
+### Tutor accepted session listings
+GET https://accentor490.pythonanywhere.com/request-session-listings/?query=accepted HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
+
+### Request a session with a tutor
+POST https://accentor490.pythonanywhere.com/request-session-listings/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NTExLCJpYXQiOjE3NDA3NjE1MTEsImp0aSI6ImFlYTNjNDFkMzYwZjRkZDE4NTI3NTczNDA0Y2RiZjQyIiwidXNlcl9pZCI6Mn0.Ps824ZcnmsGlyS28FPLHr27vd4pqiqu50-ReBB793N0
+
+{
+    "requestID": "1",
 }
 
 ### Leave feedback for a tutor
@@ -126,5 +150,5 @@ GET https://accentor490.pythonanywhere.com/get-notifications/ HTTP/1.1
 Authorization: Bearer <your_access_token>
 
 ### Search tutors
-GET https://accentor490.pythonanywhere.com/search-tutors/?query=math HTTP/1.1
-Authorization: Bearer <your_access_token>
+GET https://accentor490.pythonanywhere.com/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMjk3NDEwLCJpYXQiOjE3NDA3NjE0MTAsImp0aSI6IjkzMGY5NTQ5ZTYxMTRkMmU4NDZjZTNjM2YwYjE0N2Y2IiwidXNlcl9pZCI6MX0.caiaabqznLVFZZH0qcVNnD8_7m1VdtnxcyZiHzRnCMc

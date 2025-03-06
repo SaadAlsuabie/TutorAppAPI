@@ -34,11 +34,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password', 'role']
+        fields = ['id', 'username', 'full_name', 'email', 'password', 'role']
 
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
+            full_name=validated_data['full_name'],
             email=validated_data['email'],
             password=validated_data['password'],
             role=validated_data['role']
@@ -79,8 +80,8 @@ class UserLoginSerializer(serializers.Serializer):
         return data
 
 class TutorProfileSerializer(serializers.ModelSerializer):
-    faculty = FacultySerializer(read_only=True)
-    courses = CourseSerializer(many=True, read_only=True, source='tutcourse_set')
+    # faculty = FacultySerializer(read_only=True)
+    # courses = CourseSerializer(many=True, read_only=True, source='tutcourse_set')
 
     class Meta:
         model = TutorProfile
