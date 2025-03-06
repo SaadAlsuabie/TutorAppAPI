@@ -5,7 +5,7 @@ from .views import (
     SetAvailabilityAPI, AcceptDeclineSessionAPI, UploadRecordingAPI,
     MakePaymentAPI, SendMessageAPI, GetMessagesAPI,
     GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, 
-    GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI
+    GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, RequestSessionListAPI
 )
 
 urlpatterns = [
@@ -21,6 +21,7 @@ urlpatterns = [
  
     # Tutor Path
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),
+    path('request-session-listings/', RequestSessionListAPI.as_view(), name='request-session-list'),
     path('accept-decline-session/<int:request_id>/', AcceptDeclineSessionAPI.as_view(), name='accept-decline-session'),
     path('upload-recording/', UploadRecordingAPI.as_view(), name='upload-recording'),
 

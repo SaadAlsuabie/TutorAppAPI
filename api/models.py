@@ -36,6 +36,7 @@ class StudentProfile(models.Model):
     # faculty = models.ForeignKey('Faculty', on_delete=models.CASCADE)
     # major = models.ForeignKey('Major', on_delete=models.CASCADE)
     faculty = models.TextField(blank=True, null=True)
+    course = models.TextField(blank=True, null=True)
     major = models.TextField(blank=True, null=True)
     academic_year = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -48,6 +49,7 @@ class TutorProfile(models.Model):
     bio = models.TextField(blank=True, null=True)
     # major = models.ForeignKey('Major', on_delete=models.CASCADE)
     major = models.TextField(blank=True, null=True)
+    year_level = models.TextField(blank=True, null=True)
     course = models.TextField(blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
     is_verified = models.BooleanField(default=False)
@@ -97,7 +99,8 @@ class TutorPricing(models.Model):
     session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+
 class SessionRequest(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -108,10 +111,15 @@ class SessionRequest(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_requests')
     # session_type = models.ForeignKey(SessionType, on_delete=models.CASCADE)
     session_type = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
     requested_time = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     decline_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+class Chats(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session = models.ForeignKey(SessionRequest, on_delete=models.CASCADE)
     
 class ScheduledSession(models.Model):
     PAYMENT_STATUS_CHOICES = [
@@ -161,6 +169,7 @@ class PurchasedRecording(models.Model):
     purchase_date = models.DateTimeField(auto_now_add=True)
     
 class Message(models.Model):
+    chat = models.ForeignKey(Chats, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
