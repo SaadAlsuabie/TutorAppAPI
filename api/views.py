@@ -215,10 +215,107 @@ class RequestSessionListAPI(APIView):
     def get(self, request):
         try:
             queries: dict = request.query_params
-            path = queries.get("query", '')
+            path = queries.get("query", None)
             user = request.user
+            request_id = None
             
             print("path: ", path)
+            
+            if path is None:
+                return Response({"Error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if path.lower() == 'search':
+                request_id = queries.get('id', None)
+            
+            if request_id:
+                try:
+                    if user.role == "student":
+                        session = SessionRequest.objects.get(id=request_id, student=user)
+                    else:
+                        session = SessionRequest.objects.get(id=request_id, tutor=user)
+                except Exception as e:
+                    return Response({'error': 'Invalid session id provided'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                data = {
+                    "tutor": session.tutor.full_name,
+                    "session_type": session.session_type,
+                    "message": session.message,
+                    "time": session.requested_time,
+                    "status": session.status,
+                    "decline_reason" : session.decline_reason
+                }
+                return Response({'data': data}, status=status.HTTP_200_OK)
+                
+            if user.role == "student" and path.lower() == "all":
+                sessions_pending = SessionRequest.objects.filter(student=user, status="pending")
+                sessions_accepted = SessionRequest.objects.filter(student=user, status="accepted")
+                sessions_completed = SessionRequest.objects.filter(student=user, status="completed")
+                sessions_declined = SessionRequest.objects.filter(student=user, status="declined")
+                
+                pending = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id,
+                        "tutor":req.tutor.username,
+                        "tutor_id":req.tutor.id,
+                        "status":req.status,
+                    }
+                    for req in sessions_pending
+                ]
+                
+                accepted = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id,
+                        "tutor":req.tutor.username,
+                        "tutor_id":req.tutor.id,
+                        "status":req.status
+                    }
+                    for req in sessions_accepted
+                ]
+                
+                completed = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id,
+                        "tutor":req.tutor.username,
+                        "tutor_id":req.tutor.id,
+                        "status":req.status
+                    }
+                    for req in sessions_completed
+                ]
+                
+                declined = [
+                    {
+                        "name":req.student.full_name,
+                        "session_type": req.session_type,
+                        "course": StudentProfile.objects.get(user=req.student).course,
+                        "message":req.message,
+                        "request_date":req.requested_time,
+                        "request_id":req.id,
+                        "tutor":req.tutor.username,
+                        "tutor_id":req.tutor.id,
+                        "status":req.status,
+                        "decline_reason": req.decline_reason
+                    }
+                    for req in sessions_declined
+                ]
+                
+                return Response({"pending":pending, "accepted": accepted, "completed": completed, "declined": declined}, status=status.HTTP_200_OK)
+            
+            
             if path.lower() == "pending":
                 if user.role == "tutor":
                     reqs = SessionRequest.objects.filter(tutor=user, status="pending")
@@ -240,7 +337,7 @@ class RequestSessionListAPI(APIView):
                 ]
             elif path.lower() == "accepted":
                 if user.role == "tutor":
-                    reqs = SessionRequest.objects.filter(tutor=user, status="Accepted")
+                    reqs = SessionRequest.objects.filter(tutor=user, status="accepted")
                 else:
                     return Response({"error": "The user is forbidden"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 resp_list = [
@@ -260,7 +357,7 @@ class RequestSessionListAPI(APIView):
                 
             return Response({"data": resp_list}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": "An error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"An error occurred. {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def post(self, request):
         try:
@@ -297,15 +394,19 @@ class RequestSessionAPI(APIView):
         
             tutor_id = queries.get("tutor", '')
             tutorID = recvdata.get("tutor", '')
-            session_type = recvdata.get("session_type", '')
+            session_type_ = recvdata.get("session_type", '')
             requested_time = recvdata.get("requested_time", '')
             message = recvdata.get("message", '')
             tutor = User.objects.get(id=tutorID)
             
+            session_type = SessionType.objects.get(name = session_type_)
+            if not session_type:
+                return Response({"error": "invalid session type"})
+            
             if tutor and tutor.role == "tutor":
                 pass
             else:
-                return Response({'error':'The user parsed is not a tutor'})
+                return Response({'error':'The tutor does not exist'})
             # print("Sessions: ", dict(SessionRequest.STATUS_CHOICES))
             
             SessionRequest.objects.create(
@@ -352,22 +453,58 @@ class SetAvailabilityAPI(APIView):
 class AcceptDeclineSessionAPI(APIView): 
     permission_classes = [IsAuthenticated]
  
-    def patch(self, request, request_id):
-        try: 
-            session_request = SessionRequest.objects.get(id=request_id, tutor=request.user)
-        except SessionRequest.DoesNotExist:
-            return Response({"error": "Session request not found"}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request, request_id):
+        queries: dict = request.query_params
+        action = queries.get('action', None)
+        
+        if action is None:
+            return Response({'error': "No action defined"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            session_request = SessionRequest.objects.get(id=request_id, status='pending')
+            if session_request:
+                if action.lower() == 'accept':
+                    session_request.status = "accepted"
+                    session_request.save()
+                    
+                    Chats.objects.update_or_create(
+                        tutor = session_request.tutor,
+                        student= session_request.student,
+                        session = session_request
+                    )
+                    
+                    return Response({"message":"request successfully accepted"})
+                
+                elif action.lower() == 'decline':
+                    decline_reason = request.data.get('decline_reason')
+                    session_request.status = "declined"
+                    session_request.decline_reason = decline_reason
+                    session_request.save()
+                    return Response({"message":"request successfully declined"})
+                
+                else:
+                    return Response({"message":"unknown action"})
+                
+        except:
+            return Response({'error': "Session request not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+    # def patch(self, request, request_id):
+    #     try: 
+    #         session_request = SessionRequest.objects.get(id=request_id, tutor=request.user)
+    #     except SessionRequest.DoesNotExist:
+    #         return Response({"error": "Session request not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        status_action = request.data.get('status')
-        if status_action not in ['accepted', 'declined']:
-            return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
+    #     status_action = request.data.get('status')
+    #     if status_action not in ['accepted', 'declined']:
+    #         return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
 
-        session_request.status = status_action
-        if status_action == 'declined':
-            session_request.decline_reason = request.data.get('decline_reason', '')
-        session_request.save()
+    #     session_request.status = status_action
+    #     if status_action == 'declined':
+    #         session_request.decline_reason = request.data.get('decline_reason', '')
+    #     session_request.save()
 
-        return Response({"message": f"Session request {status_action}"}, status=status.HTTP_200_OK)
+    #     return Response({"message": f"Session request {status_action}"}, status=status.HTTP_200_OK)
 
 class UploadRecordingAPI(APIView):
     permission_classes = [IsAuthenticated]
