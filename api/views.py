@@ -1,3 +1,5 @@
+import random
+import string
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
     Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
-    Faculty, Major, SessionType, Chats, Message
+    Faculty, Major, SessionType, Chats, Message, Withdrawal
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -16,7 +18,8 @@ from api.serializers import (
 )
 from django.db.models import Q
 from api.permissions import AllowAny
-from datetime import datetime
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -88,7 +91,7 @@ class RegisterAPI(APIView):
                         major=major,
                         academic_year=yearlevelstudent,
                         course=courses
-                    )
+                    ) 
                 elif role == 'tutor': 
                     TutorProfile.objects.create(
                         user=user,
@@ -210,6 +213,32 @@ class BrowseTutorsAPI(APIView):
         tutors = TutorProfile.objects.filter(tutorcourse__course_id=course_id)
         serializer = TutorProfileSerializer(tutors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+# Student Path Views
+class TutorDashboardAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            data = {
+                "":[]
+            }
+            return Response({"data": data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class StudentDashboardAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            data = {
+                "":[]
+            }
+            return Response({"data": data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
 class RequestSessionListAPI(APIView): 
     permission_classes = [IsAuthenticated]
@@ -517,16 +546,120 @@ class UploadRecordingAPI(APIView):
             return Response({"message": "Recording uploaded", "recording_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
-# Payment Views
+def generate_transaction_id():
+    chars = string.ascii_uppercase + string.digits
+    while True:
+        random_part = ''.join(random.choices(chars, k=7))
+        tid = f"WTD{random_part}"
+        if not Withdrawal.objects.filter(transaction_id=tid).exists():
+            return tid
+
+class WithdrawalRequestAPI(APIView):
+    permission_classes = [IsAuthenticated]
+  
+    def post(self, request):
+        try:
+            data = request.data  # Ensure data is parsed as JSON
+            user = request.user
+            if user.role != "tutor":
+                return Response({"error": "Invalid user"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            amount = float(data.get("amount"))
+            userobj = User.objects.get(id=user.id)
+            if userobj.earnings - amount < 0:
+                return Response({"message": "Insufficient funds."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            userobj.earnings -= amount
+            userobj.save()
+            
+            # Use Withdrawal's static method to generate the transaction ID
+            withdrawal = Withdrawal.objects.create(
+                tutor=user,
+                amount=amount,
+                transaction_id=generate_transaction_id()  # ✅ Use the model's method
+            )
+            
+            return Response(
+                {"message": "Withdrawal successful", "withdrawal_id": withdrawal.transaction_id},
+                status=status.HTTP_201_CREATED
+            )
+        except ValueError:
+            return Response({"error": "Invalid amount"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+def generate_transaction_id_payment():
+    chars = string.ascii_uppercase + string.digits
+    while True:
+        random_part = ''.join(random.choices(chars, k=7))
+        tid = f"TXN{random_part}"
+        if not Payment.objects.filter(transaction_id=tid).exists():
+            return tid
+        
 class MakePaymentAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = PaymentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Payment successful", "payment_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            data: dict = request.data
+            user = request.user
+            
+            if user.role != "student":
+                return Response({"error":"user not allowed to perform the transaction"}, status=status.HTTP_404_NOT_FOUND)
+            
+            amount = data.get("amount", None)
+            platform_fee = data.get("platform_fee", None)
+            
+            payment = Payment.objects.create(
+                transaction_id = generate_transaction_id_payment(),
+                student=user,
+                amount=float(amount),
+                platform_fee=float(platform_fee),
+                expiration_date = timezone.now() + timedelta(days=30)
+            )
+            
+            user = User.objects.get(id=user.id)
+            user.subscribed = True
+            user.save()
+            
+            return Response({"message": "Payment successful", "payment_id": payment.transaction_id}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": f"An error occurred. {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GetTransactionsAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        try:
+            user = request.user
+            if user.role != "student":
+                transactions = Withdrawal.objects.filter(tutor = user)
+                data = [
+                    {
+                        "balance": transaction.tutor.earnings,
+                        "amount": transaction.amount,
+                        "transaction_id": transaction.transaction_id,
+                        "payment_date": transaction.payment_date,
+                        "status": transaction.status
+                    }
+                    for transaction in transactions
+                ]
+            else:
+                transactions = Payment.objects.filter(student=user)
+                data = [
+                        {
+                            "amount": transaction.amount,
+                            "transaction_id": transaction.transaction_id,
+                            "payment_date": transaction.payment_date,
+                            "Expiration_date": transaction.expiration_date,
+                            "status": transaction.status
+                        }
+                        for transaction in transactions
+                ]
+            return Response({"data": data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Messaging Views
 class SendMessageAPI(APIView):

@@ -3,9 +3,12 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from datetime import timedelta
+import string
+import random
 
 class User(AbstractUser):
-    ROLE_CHOICES = [
+    ROLE_CHOICES = [ 
         ('student', 'Student'),
         ('tutor', 'Tutor'),
     ]
@@ -13,6 +16,8 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100, blank=True, null=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
+    subscribed = models.BooleanField(default=False)
+    earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     
 
     # Override the groups and user_permissions fields to avoid clashes
@@ -141,14 +146,47 @@ class Payment(models.Model):
         ('released', 'Released'),
         ('refunded', 'Refunded'),
     ]
-    scheduled_session = models.ForeignKey(ScheduledSession, on_delete=models.CASCADE, null=True, blank=True)
-    purchased_recording = models.ForeignKey('PurchasedRecording', on_delete=models.CASCADE, null=True, blank=True)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     platform_fee = models.DecimalField(max_digits=10, decimal_places=2)
-    transaction_id = models.CharField(max_length=100)
-    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=100, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    payment_date = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField(null=True, blank=True)
+    
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:  
+    #         self.expiration_date = self.payment_date + timedelta(days=30)
+    #     super().save(*args, **kwargs)
+        
+    #     if not self.transaction_id:
+    #             self.transaction_id = self.generate_transaction_id()
+            
+    # @staticmethod
+    # def generate_transaction_id():
+    #     chars = string.ascii_uppercase + string.digits
+    #     while True:
+    #         random_part = ''.join(random.choices(chars, k=7))
+    #         tid = f"TXN{random_part}"
+    #         if not Payment.objects.filter(transaction_id=tid).exists():
+    #             return tid
+            
+    
+class Withdrawal(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('held', 'Held'),
+        ('released', 'Released'),
+        ('refunded', 'Refunded'),
+    ]
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_id = models.CharField(max_length=100, null=True, blank=True)
+    status = models.CharField(max_length=100, choices=PAYMENT_STATUS_CHOICES, default='pending')
     payment_date = models.DateTimeField(auto_now_add=True)
     
+            
+            
 class Feedback(models.Model):
     scheduled_session = models.ForeignKey(ScheduledSession, on_delete=models.CASCADE)
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedback_given')

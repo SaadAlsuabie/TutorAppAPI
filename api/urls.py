@@ -5,8 +5,10 @@ from .views import (
     SetAvailabilityAPI, AcceptDeclineSessionAPI, UploadRecordingAPI,
     MakePaymentAPI, SendMessageAPI, GetMessagesAPI,
     GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, 
-    GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, RequestSessionListAPI
-)
+    GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, 
+    RequestSessionListAPI, GetTransactionsAPI, WithdrawalRequestAPI,
+    StudentDashboardAPI, TutorDashboardAPI
+) 
 
 urlpatterns = [
     # Authentication
@@ -15,11 +17,13 @@ urlpatterns = [
     path('logout/', LogoutAPIView.as_view(), name='logout'),
 
     # Student Path
+    path('student-dashboard/', StudentDashboardAPI.as_view(), name='student-dashboard'),
     path('browse-tutors/', BrowseTutorsAPI.as_view(), name='browse-tutors'),
     path('request-session/', RequestSessionAPI.as_view(), name='request-session'),
     path('leave-feedback/', LeaveFeedbackAPI.as_view(), name='leave-feedback'),
  
     # Tutor Path
+    path('tutor-dashboard/', TutorDashboardAPI.as_view(), name='tutor-dashboard'),
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),
     path('request-session-listings/', RequestSessionListAPI.as_view(), name='request-session-list'),
     path('accept-decline-session/<int:request_id>/', AcceptDeclineSessionAPI.as_view(), name='accept-decline-session'),
@@ -27,6 +31,9 @@ urlpatterns = [
 
     # Payment
     path('make-payment/', MakePaymentAPI.as_view(), name='make-payment'),
+    # 
+    path('get-transactions/', GetTransactionsAPI.as_view(), name='get-transactions'),
+    path('withdrawal/', WithdrawalRequestAPI.as_view(), name='withdrawal'),
 
     # Messaging
     path('send-message/', SendMessageAPI.as_view(), name='send-message'),
