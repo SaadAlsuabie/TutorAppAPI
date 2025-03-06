@@ -16,6 +16,7 @@ from api.serializers import (
 )
 from django.db.models import Q
 from api.permissions import AllowAny
+from datetime import datetime
 
 User = get_user_model()
 
@@ -532,14 +533,45 @@ class SendMessageAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = MessageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(sender=request.user)
-            return Response({"message": "Message sent", "message_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        data: dict = request.data
+        user = request.user
+        
+        session_request_id = data.get("session_request_id", None)
+        message = data.get("content", None)
+        
+        try:
+            chat = Chats.objects.get(session=session_request_id)
+            read_status_tutor = False
+            read_status_student = False
+            
+            if user.role == "student":
+                sender_id = chat.student.id
+                receiver_id = chat.tutor.id
+                read_status_student = True
+            else:
+                sender_id = chat.tutor.id
+                receiver_id = chat.student.id
+                read_status_tutor = True
+                
+            Message.objects.create(
+                chat=chat,
+                sender = sender_id,
+                receiver = receiver_id,
+                content=message,
+                read_status_student=read_status_student,
+                read_status_tutor=read_status_tutor
+            )
+            return Response({"message":"message succesfully sent."})
+        except Exception as e:
+            return Response({"error": f"An error occurred."}, status=status.HTTP_404_NOT_FOUND)
+        
 class GetMessagesAPI(APIView):
     permission_classes = [IsAuthenticated]
+    
+    def format_datetime(self, dt:datetime):
+        formatted = dt.strftime("%Y-%m-%d %I:%M %p")
+        formatted = formatted.replace("AM", "a.m").replace("PM", "p.m")
+        return formatted
 
     def get(self, request):
         queries: dict = request.query_params
@@ -548,19 +580,35 @@ class GetMessagesAPI(APIView):
         ret_resp = []
         chats_dict = {}
         
-        query = queries.get("query", '')
+        query = queries.get("query", None)
         if query.lower() == "all":
             ret_resp = []
-            chats = Chats.objects.filter(user=user)
+            if user.role == "student":
+                chats = Chats.objects.filter(student=user)
+            else:
+                chats = Chats.objects.filter(tutor=user)
+                
             for chat in chats:
                 chats_dict = {}
-                message = Message.objects.filter(chat=chat, receiver=user).last()
-                if message:
-                    chats_dict['full_name'] = chat.user.full_name
-                    chats_dict['message'] = message.content
-                    chats_dict['time'] = message.timestamp
+                message = Message.objects.filter(chat=chat).last()
+                if user.role == "student":
+                    unread_count = Message.objects.filter(chat=chat, read_status_student=False).count()
                 else:
-                    chats_dict['full_name'] = chat.user.full_name
+                    unread_count = Message.objects.filter(chat=chat, read_status_tutor=False).count()
+                
+                chats_dict['chat_session_id'] = chat.session.id
+                chats_dict['unread_count'] = unread_count
+
+                if user.role == "student":
+                    chats_dict['full_name'] = chat.tutor.full_name
+                else:
+                    chats_dict['full_name'] = chat.student.full_name
+                    
+                if message:
+                    chats_dict['message'] = message.content
+                    chats_dict['time'] = self.format_datetime(message.timestamp)
+                    
+                else:
                     chats_dict['message'] = "No message"
                     chats_dict['time'] = "N/A"
                     
@@ -571,15 +619,23 @@ class GetMessagesAPI(APIView):
             session_ = SessionRequest.objects.filter(id=request_id)
             if session_.exists():
                 for session in session_:
-                    chats = Chats.objects.filter(user=user, session=session)
+                    chats = Chats.objects.filter(session=session)
+                    if not chats.exists():
+                        return Response({"error": "The requested chat does not exist.."}, status=status.HTTP_404_NOT_FOUND)
+        
                     for chat in chats:
                         messages = Message.objects.filter(chat=chat)
+                        if not messages.exists():
+                            return Response({"data": []}, status=status.HTTP_200_OK)
+                        
                         for message in messages:
+                            if user.role == "student":
+                                message.read_status_student = True
+                            else:
+                                message.read_status_tutor = True
+                            message.save()
                             chats_dict = {}
-                            chats_dict['sender'] = message.sender
-                            if message.receiver == user:
-                                chats_dict['receiver'] = "me"
-                                
+                            chats_dict['sender'] = "me" if message.sender == str(user.id) else "not me"
                             chats_dict['content'] = message.content
                             
                             ret_resp.append(chats_dict)
@@ -722,7 +778,7 @@ class SearchTutorsAPI(APIView):
             if not sessions.exists():
                 for key_, value_ in dict(SessionType.SESSION_CHOICES).items():
                     SessionType.objects.update_or_create(
-                        name=value_
+                        name=key_
                     )
             
             sessions_ = SessionType.objects.all()

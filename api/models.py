@@ -118,8 +118,8 @@ class SessionRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
 class Chats(models.Model):
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_tutor')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_student')
     session = models.ForeignKey(SessionRequest, on_delete=models.CASCADE)
     
     
@@ -172,9 +172,12 @@ class PurchasedRecording(models.Model):
     
 class Message(models.Model):
     chat = models.ForeignKey(Chats, on_delete=models.CASCADE)
+    sender = models.CharField(max_length=250, null=True, blank=True)
+    receiver = models.CharField(max_length=250, null=True, blank=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    read_status = models.BooleanField(default=False)
+    read_status_tutor = models.BooleanField(default=False)
+    read_status_student = models.BooleanField(default=False)
     
 class Notification(models.Model):
     NOTIFICATION_TYPES = [
