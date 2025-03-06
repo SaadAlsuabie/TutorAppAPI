@@ -292,7 +292,7 @@ class UploadRecordingAPI(APIView):
             serializer.save(tutor=request.user)
             return Response({"message": "Recording uploaded", "recording_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+ 
 # Payment Views
 class MakePaymentAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -333,6 +333,78 @@ class GetNotificationsAPI(APIView):
         notifications = Notification.objects.filter(user_id=user_id)
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Notification Views
+class GetAllTutorsAPI(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny] 
+
+    def get(self, request):
+         
+        usser = User.objects.filter(role="tutor")
+        
+        data = [
+            {
+                "UserName": us.username,
+                "Full Name": us.full_name,
+                "ID": us.id,
+                "Email": us.email
+            }
+            for us in usser
+        ]
+        return Response({"data": data}, status=status.HTTP_200_OK)
+
+class GetAllStudentsAPI(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny] 
+
+    def get(self, request):
+        
+        usser = User.objects.filter(role="student")
+        
+        data = [
+            {
+                "UserName": us.username,
+                "Full Name": us.full_name,
+                "ID": us.id,
+                "Email": us.email
+            }
+            for us in usser
+        ]
+        return Response({"data": data}, status=status.HTTP_200_OK)
+
+class GetAllRequestsAPI(APIView):
+    # authentication_classes = []
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request):
+        
+        user = request.user
+        if user.role != "tutor":
+            return Response({'error': 'An error just occurred'}, status=status.HTTP_204_NO_CONTENT)
+        
+        query_params: dict = request.query_params
+        query: str = query_params.get('query')
+        
+        if query.lower() == "pending":
+            sessions = SessionRequest.objects.filter(tutor=user, status='pending')
+        elif query.lower() == "accepted":
+            sessions = SessionRequest.objects.filter(tutor=user, status='accepted')
+        else:
+            return Response({"error": "Invalid query parameter"})
+        
+        usser = User.objects.filter(role="student")
+        
+        data = [
+            {
+                "UserName": us.username,
+                "Full Name": us.full_name,
+                "ID": us.id,
+                "Email": us.email
+            }
+            for us in usser
+        ]
+        return Response({"data": data}, status=status.HTTP_200_OK)
 
 # Search Views
 class SearchTutorsAPI(APIView):

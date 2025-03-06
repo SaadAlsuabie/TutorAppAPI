@@ -23,15 +23,24 @@ Content-Type: application/json
     "password": "james123"
 }
 
+### get all tutors
+GET http://127.0.0.1:8000/get-all-tutors/ HTTP/1.1
+Content-Type: application/json
+
+### get all students
+GET http://127.0.0.1:8000/get-all-students/ HTTP/1.1
+Content-Type: application/json
+
 ###
 POST http://127.0.0.1:8000/logout/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwNDY5NjM3LCJpYXQiOjE3NDA0NjkzMzcsImp0aSI6IjliYTg1OGUzZTI4MDQ4YTFhMzhjYTBjZWU3MGU3OTMyIiwidXNlcl9pZCI6MX0.9LeR0yLaXmEgY876R8a0yL25F-1Ogw_lHmQRh4dOn78
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc2OTQ4LCJpYXQiOjE3NDEyNDA5NDgsImp0aSI6ImE3OGQ0ZjNmYmY0ZDRjZjlhNTExODc5ZTJmYTUwNDEyIiwidXNlcl9pZCI6M30.Co84YbQGnLdKmAKII57s9M5BLGurTp50EzVONABALyM
 
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MDU1NTczNywiaWF0IjoxNzQwNDY5MzM3LCJqdGkiOiIwZTU5NmMyYWU5N2Y0NjE3YjM3MDZhMDdkN2I0MGJhNiIsInVzZXJfaWQiOjF9.__J7Wr-FWSqGoSxp1rSSYgxRVqcCrjraisYeyILpidI",
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mjc3Njk0OCwiaWF0IjoxNzQxMjQwOTQ4LCJqdGkiOiJiYWM1NWM5MWM5MDc0NTdjODk1YWE0NzFmNGFhNjZkZSIsInVzZXJfaWQiOjN9.nLBl3AA1p6rMzp0Tp0aoZ-c83DxnkYzA3648DBqp04Q",
 }
 
+#------------------------------------- _Student_ -----------------------------------
 ### Browse tutors for a specific course (GET)
 GET http://127.0.0.1:8000/browse-tutors/?course_id=1 HTTP/1.1
 Authorization: Bearer <your_access_token>
@@ -39,10 +48,10 @@ Authorization: Bearer <your_access_token>
 ### Request a session with a tutor
 POST http://127.0.0.1:8000/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTkyMDEzLCJpYXQiOjE3NDA2NTYwMTMsImp0aSI6IjAxMDQyNTc0NDdiMTQ4N2U5YmY0MWRlMTI3Nzg4MWI4IiwidXNlcl9pZCI6M30.uZLSie3OfqRKODU6oFHcTlrUd89MZnRia7z7-AM_-KA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc5Mjc1LCJpYXQiOjE3NDEyNDMyNzUsImp0aSI6ImVkYjNiYmUyYzIxMzQ5MjhiODc2Zjk1MDZiOTQ5MTNmIiwidXNlcl9pZCI6M30.UTw9nxIV9-s_etwEBnZfHCl2FXZGeUI75nc-j1TZxiA
 
 {
-    "tutor": 2,
+    "tutor": 4,
     "session_type": 1,
     "requested_time": "2023-10-15T14:00:00Z"
 }
@@ -56,48 +65,6 @@ Authorization: Bearer <your_access_token>
     "to_user": 2,
     "rating": 5,
     "comment": "Great session, very helpful!"
-}
-
-### Set tutor availability
-POST http://127.0.0.1:8000/set-availability/ HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer <your_access_token>
-
-{
-    "session_type": 1,
-    "start_time": "2023-10-15T10:00:00Z",
-    "end_time": "2023-10-15T12:00:00Z"
-}
-
-### Accept or decline a session request
-PATCH http://127.0.0.1:8000/accept-decline-session/1/ HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer <your_access_token>
-
-{
-    "status": "accepted"
-}
-
-### Decline a session request with a reason
-PATCH http://127.0.0.1:8000/accept-decline-session/1/ HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer <your_access_token>
-
-{
-    "status": "declined",
-    "decline_reason": "I am not available at that time."
-}
-
-### Upload a recording
-POST http://127.0.0.1:8000/upload-recording/ HTTP/1.1
-Content-Type: application/json
-Authorization: Bearer <your_access_token>
-
-{
-    "course": 1,
-    "title": "Introduction to Calculus",
-    "description": "This recording covers the basics of calculus.",
-    "file_url": "https://example.com/recording.mp4"
 }
 
 ### Make a payment
@@ -132,10 +99,59 @@ Authorization: Bearer <your_access_token>
 
 ### Search tutors
 GET http://127.0.0.1:8000/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc5Mjc1LCJpYXQiOjE3NDEyNDMyNzUsImp0aSI6ImVkYjNiYmUyYzIxMzQ5MjhiODc2Zjk1MDZiOTQ5MTNmIiwidXNlcl9pZCI6M30.UTw9nxIV9-s_etwEBnZfHCl2FXZGeUI75nc-j1TZxiA
 
 ### Search tutors
 GET http://127.0.0.1:8000/search-tutors/?all=true HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyMTY4NTg1LCJpYXQiOjE3NDA2MzI1ODUsImp0aSI6IjIyZDdhNDU1OGI2NTQ4YjdiYjRkNzdkZTIwNzMzMDJhIiwidXNlcl9pZCI6MX0.b66kg3k9EZrMGyX8WW_Tm5wcn2CcO9S3tx1hvdJNKcs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc5Mjc1LCJpYXQiOjE3NDEyNDMyNzUsImp0aSI6ImVkYjNiYmUyYzIxMzQ5MjhiODc2Zjk1MDZiOTQ5MTNmIiwidXNlcl9pZCI6M30.UTw9nxIV9-s_etwEBnZfHCl2FXZGeUI75nc-j1TZxiA
+
+#---------------------------------------------------------------------------------------
+#------------------------------------- _Tutor_ -----------------------------------------
+### Set tutor availability
+POST http://127.0.0.1:8000/set-availability/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc4ODI0LCJpYXQiOjE3NDEyNDI4MjQsImp0aSI6ImE5M2EyYmZkNjA0YjQ3N2I5YWIwOWEzYzYwNjM4NDFmIiwidXNlcl9pZCI6NH0.dLtZ_VItUlycuW9jhZVLa7LPVIsPyo5BovV68HXgBbg
+
+{
+    "session_type": 1,
+    "start_time": "2023-10-15T10:00:00Z",
+    "end_time": "2023-10-15T12:00:00Z"
+}
+
+### Set tutor availability
+POST http://127.0.0.1:8000/set-availability/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc4ODI0LCJpYXQiOjE3NDEyNDI4MjQsImp0aSI6ImE5M2EyYmZkNjA0YjQ3N2I5YWIwOWEzYzYwNjM4NDFmIiwidXNlcl9pZCI6NH0.dLtZ_VItUlycuW9jhZVLa7LPVIsPyo5BovV68HXgBbg
+
+
+### Accept or decline a session request
+PATCH http://127.0.0.1:8000/accept-decline-session/1/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc4ODI0LCJpYXQiOjE3NDEyNDI4MjQsImp0aSI6ImE5M2EyYmZkNjA0YjQ3N2I5YWIwOWEzYzYwNjM4NDFmIiwidXNlcl9pZCI6NH0.dLtZ_VItUlycuW9jhZVLa7LPVIsPyo5BovV68HXgBbg
+
+{
+    "status": "accepted"
+}
+
+### Decline a session request with a reason
+PATCH http://127.0.0.1:8000/accept-decline-session/1/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc4ODI0LCJpYXQiOjE3NDEyNDI4MjQsImp0aSI6ImE5M2EyYmZkNjA0YjQ3N2I5YWIwOWEzYzYwNjM4NDFmIiwidXNlcl9pZCI6NH0.dLtZ_VItUlycuW9jhZVLa7LPVIsPyo5BovV68HXgBbg
+
+{
+    "status": "declined",
+    "decline_reason": "I am not available at that time."
+}
+
+### Upload a recording
+POST http://127.0.0.1:8000/upload-recording/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc4ODI0LCJpYXQiOjE3NDEyNDI4MjQsImp0aSI6ImE5M2EyYmZkNjA0YjQ3N2I5YWIwOWEzYzYwNjM4NDFmIiwidXNlcl9pZCI6NH0.dLtZ_VItUlycuW9jhZVLa7LPVIsPyo5BovV68HXgBbg
+
+{
+    "course": 1,
+    "title": "Introduction to Calculus",
+    "description": "This recording covers the basics of calculus.",
+    "file_url": "https://example.com/recording.mp4"
+}
 
