@@ -197,10 +197,12 @@ class Feedback(models.Model):
     
 class Recording(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    file_url = models.CharField(max_length=255)
+    # course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.CharField(max_length=250, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    file_url = models.CharField(max_length=255, null=True, blank=True)
+    cost = models.CharField(max_length=255, null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     
 class PurchasedRecording(models.Model):

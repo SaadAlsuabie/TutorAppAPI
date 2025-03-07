@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.models import (
     User, TutorProfile, SessionRequest, Feedback, TutorAvailability,
     Recording, Payment, Message, Notification, StudentProfile, TutorProfile,
-    Faculty, Major, SessionType, Chats, Message, Withdrawal
+    Faculty, Major, SessionType, Chats, Message, Withdrawal, PurchasedRecording
 )
 from api.serializers import (
     UserRegisterSerializer, UserLoginSerializer, TutorProfileSerializer,
@@ -536,16 +536,75 @@ class AcceptDeclineSessionAPI(APIView):
 
     #     return Response({"message": f"Session request {status_action}"}, status=status.HTTP_200_OK)
 
-class UploadRecordingAPI(APIView):
+class RecordingAPI(APIView): 
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        try:
+            user = request.user
+            if user.role == "student":
+                recordings = Recording.objects.all()
+                purchased = PurchasedRecording.objects.filter(student = user)
+                data = {
+                    "recorded":[
+                        {
+                            # "course": TutorProfile.objects.get(user=recording.tutor).course,
+                            "course": recording.course,
+                            "tutor": recording.tutor.full_name,
+                            "title":recording.title,
+                            "url": recording.file_url,
+                            "cost": recording.cost,
+                            "description": recording.description,
+                            "recording_id": recording.pk
+                        }
+                        for recording in recordings
+                    ],
+                    "purchased":[
+                        {
+                            # "course": TutorProfile.objects.get(user=recording_.recording.tutor).course,
+                            "course": recording_.recording.course,
+                            "tutor": recording_.recording.tutor.full_name,
+                            "title":recording_.recording.title,
+                            "url": recording_.recording.file_url,
+                            "purchased_date": recording_.purchase_date,
+                            "description": recording_.recording.description
+                        }
+                        for recording_ in purchased
+                    ]
+                }
+            else:
+                recordings = Recording.objects.filter(tutor = user)
+                data = {
+                    "uploads": [
+                        {
+                            "title": recording.title,
+                            "course": recording.course,
+                            "cost": recording.cost,
+                            "recording_id": recording.pk
+                        }
+                        for recording in recordings
+                    ]
+                }
+            return Response({"data":data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def post(self, request):
-        serializer = RecordingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(tutor=request.user)
-            return Response({"message": "Recording uploaded", "recording_id": serializer.data['id']}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
+        try:
+            user = request.user
+            queries: dict = request.query_params
+            data: dict = request.data
+            
+            query = queries.get("query", None)
+            
+            if query == "upload" and user.role == "tutor":
+                return Response({"message": "successfully uploaded"}, status=status.HTTP_200_OK)
+            
+            else:
+                return Response({"error": "Invalid request"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        except Exception as e:
+            return Response({"error": f"An error occurred. {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)        
+        
 def generate_transaction_id():
     chars = string.ascii_uppercase + string.digits
     while True:
@@ -566,7 +625,7 @@ class WithdrawalRequestAPI(APIView):
             
             amount = float(data.get("amount"))
             userobj = User.objects.get(id=user.id)
-            if userobj.earnings - amount < 0:
+            if float(userobj.earnings) - amount < 0:
                 return Response({"message": "Insufficient funds."}, status=status.HTTP_400_BAD_REQUEST)
             
             userobj.earnings -= amount

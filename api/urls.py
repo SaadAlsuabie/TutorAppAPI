@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     RegisterAPI, LoginAPI,
     BrowseTutorsAPI, RequestSessionAPI, LeaveFeedbackAPI,
-    SetAvailabilityAPI, AcceptDeclineSessionAPI, UploadRecordingAPI,
+    SetAvailabilityAPI, AcceptDeclineSessionAPI, RecordingAPI,
     MakePaymentAPI, SendMessageAPI, GetMessagesAPI,
     GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, 
     GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, 
@@ -22,12 +22,13 @@ urlpatterns = [
     path('request-session/', RequestSessionAPI.as_view(), name='request-session'),
     path('leave-feedback/', LeaveFeedbackAPI.as_view(), name='leave-feedback'),
  
+    path('recording/', RecordingAPI.as_view(), name='recording'),
+    
     # Tutor Path
     path('tutor-dashboard/', TutorDashboardAPI.as_view(), name='tutor-dashboard'),
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),
     path('request-session-listings/', RequestSessionListAPI.as_view(), name='request-session-list'),
     path('accept-decline-session/<int:request_id>/', AcceptDeclineSessionAPI.as_view(), name='accept-decline-session'),
-    path('upload-recording/', UploadRecordingAPI.as_view(), name='upload-recording'),
 
     # Payment
     path('make-payment/', MakePaymentAPI.as_view(), name='make-payment'),
