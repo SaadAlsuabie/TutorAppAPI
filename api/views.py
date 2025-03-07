@@ -20,7 +20,7 @@ from django.db.models import Q
 from api.permissions import AllowAny
 from datetime import datetime, timedelta
 from django.utils import timezone
-
+ 
 User = get_user_model()
 
 # Authentication Views
@@ -215,30 +215,65 @@ class BrowseTutorsAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 # Student Path Views
-class TutorDashboardAPI(APIView):
+class DashboardAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
-            data = {
-                "":[]
-            }
+            user = request.user
+            
+            if user.role == "student":
+                sessions = SessionRequest.objects.filter(student=user)
+                pending_requests = SessionRequest.objects.filter(student=user, status='pending').count()
+                accepted_bookings = SessionRequest.objects.filter(student=user, status='accepted').count()
+                current_time = timezone.now() 
+                
+                data = {
+                    "upcoming":accepted_bookings,
+                    "pending":pending_requests,
+                    "recorded":0,
+                    "upcoming_sessions":[
+                        {
+                        'tutor_name': session.tutor.full_name,  
+                        'session_type': session.session_type,
+                        "course":TutorProfile.objects.get(user=session.tutor).course,
+                        'requested_time': session.requested_time.strftime('%Y-%m-%d %H:%M'),
+                        'status': session.status
+                        }
+                        for session in sessions 
+                        if session.requested_time > current_time and session.status == 'accepted'
+                    ]
+                }
+            elif user.role == "tutor":
+                sessions = SessionRequest.objects.filter(tutor=user)
+                pending_requests = SessionRequest.objects.filter(tutor=user, status='pending').count()
+                accepted_bookings = SessionRequest.objects.filter(tutor=user, status='accepted').count()
+                current_time = timezone.now() 
+                
+                data = {
+                    "accepted_bookings":accepted_bookings,
+                    "pending_requests":pending_requests,
+                    "earnings":user.earnings,
+                    "upcoming_sessions":[
+                        {
+                        'student_name': session.student.full_name,  
+                        'session_type': session.session_type,
+                        "course":TutorProfile.objects.get(user=session.tutor).course,
+                        'requested_time': session.requested_time.strftime('%Y-%m-%d %H:%M'),
+                        'status':session.status
+                        }
+                        for session in sessions 
+                        if session.requested_time > current_time and session.status == 'accepted'
+                    ]
+                }
+            else:
+                return Response({"error": "Invalid user"})
+            
             return Response({"data": data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-class StudentDashboardAPI(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        try:
-            data = {
-                "":[]
-            }
-            return Response({"data": data}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 
 class RequestSessionListAPI(APIView): 
     permission_classes = [IsAuthenticated]
