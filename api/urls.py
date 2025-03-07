@@ -7,23 +7,22 @@ from .views import (
     GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, 
     GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, 
     RequestSessionListAPI, GetTransactionsAPI, WithdrawalRequestAPI,
-    StudentDashboardAPI, TutorDashboardAPI
+    DashboardAPI
 ) 
-
+ 
 urlpatterns = [
     # Authentication
     path('register/', RegisterAPI.as_view(), name='register'),
     path('login/', LoginAPI.as_view(), name='login'),
     path('logout/', LogoutAPIView.as_view(), name='logout'),
+    path('dashboard/', DashboardAPI.as_view(), name='dashboard'),
 
     # Student Path
-    path('student-dashboard/', StudentDashboardAPI.as_view(), name='student-dashboard'),
     path('browse-tutors/', BrowseTutorsAPI.as_view(), name='browse-tutors'),
     path('request-session/', RequestSessionAPI.as_view(), name='request-session'),
     path('leave-feedback/', LeaveFeedbackAPI.as_view(), name='leave-feedback'),
  
     # Tutor Path
-    path('tutor-dashboard/', TutorDashboardAPI.as_view(), name='tutor-dashboard'),
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),
     path('request-session-listings/', RequestSessionListAPI.as_view(), name='request-session-list'),
     path('accept-decline-session/<int:request_id>/', AcceptDeclineSessionAPI.as_view(), name='accept-decline-session'),

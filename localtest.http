@@ -41,6 +41,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 }
 
 #------------------------------------- _Student_ -----------------------------------
+### Dashboard
+GET http://127.0.0.1:8000/dashboard/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+
 ### Search tutors - Find tutor
 GET http://127.0.0.1:8000/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
@@ -56,8 +60,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 {
     "tutor": 1,
-    "session_type": "group",
-    "requested_time": "2023-10-15T14:00:00Z",
+    "session_type": "one-on-one",
+    "requested_time": "2025-10-15T14:00:00Z",
     "message": "I have problem with calculus"
 }
 
@@ -124,6 +128,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 
 #------------------------------------------ _Tutor_ -----------------------------------------
+### Get Dashboard - dashboard
+GET http://127.0.0.1:8000/dashboard/ HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
 
 ### Tutor pending session listings - Requests
 GET http://127.0.0.1:8000/request-session-listings/?query=pending HTTP/1.1
