@@ -649,11 +649,11 @@ class RecordingAPI(APIView):
             if 'file' not in request.FILES:
                 return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-            uploaded_file = request.FILES['file']
-            file_path = f"media/{uploaded_file.name}"
-            with open(file_path, 'wb+') as destination:
-                for chunk in uploaded_file.chunks():
-                    destination.write(chunk)
+            # uploaded_file = request.FILES['file']
+            # file_path = f"media/{uploaded_file.name}"
+            # with open(file_path, 'wb+') as destination:
+            #     for chunk in uploaded_file.chunks():
+            #         destination.write(chunk)
                     
             user = request.user
             queries: dict = request.query_params
@@ -669,6 +669,12 @@ class RecordingAPI(APIView):
                 file = data.get("file_url")
                 
                 uploaded_file = request.FILES.get('file')
+                
+                print("Title: ", title)
+                print("Course: ", course)
+                print("price: ", price)
+                print("description: ", description)
+                print("File: ", uploaded_file)
 
                 if not all([title, course, price, description, uploaded_file]):
                     return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
