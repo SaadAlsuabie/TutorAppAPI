@@ -578,13 +578,17 @@ class AcceptDeclineSessionAPI(APIView):
     #     session_request.save()
 
     #     return Response({"message": f"Session request {status_action}"}, status=status.HTTP_200_OK)
+
 class FetchVideoAPIView(APIView):
     def get(self, request, recording_id, *args, **kwargs):
-        # Fetch the video file from the database
-        course_material = get_object_or_404(Recording, id=int(recording_id))
-        file_path = course_material.file.path
+        try:
+            course_material = get_object_or_404(Recording, id=int(recording_id))
+            file_path = course_material.file.path
 
-        return FileResponse(open(file_path, 'rb'), content_type='video/mp4')
+            return FileResponse(open(file_path, 'rb'), content_type='video/mp4')
+        except Exception as e:
+            return Response({"error": "an error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class RecordingAPI(APIView): 
     permission_classes = [IsAuthenticated]

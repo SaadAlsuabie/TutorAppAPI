@@ -202,9 +202,10 @@ class Recording(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     file_url = models.CharField(max_length=255, null=True, blank=True)
-    file = models.FileField(upload_to='recordings/')
+    file = models.FileField(upload_to='recordings/', null=True, blank=True)
     cost = models.CharField(max_length=255, null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
+    
     
 class PurchasedRecording(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
