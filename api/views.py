@@ -253,7 +253,7 @@ class DashboardAPI(APIView):
                 data = {
                     "accepted_bookings":accepted_bookings,
                     "pending_requests":pending_requests,
-                    "earnings":user.earnings,
+                    "earnings": format(user.earnings, '.2f'),
                     "upcoming_sessions":[
                         {
                         'student_name': session.student.full_name,  
@@ -538,6 +538,11 @@ class AcceptDeclineSessionAPI(APIView):
                         session = session_request
                     )
                     
+                    user = User.objects.get(id=request.user.id)
+                    bal = float(user.earnings) + float("15")
+                    user.earnings = bal
+                    user.save()
+                    
                     return Response({"message":"request successfully accepted"})
                 
                 elif action.lower() == 'decline':
@@ -588,7 +593,7 @@ class RecordingAPI(APIView):
                             "tutor": recording.tutor.full_name,
                             "title":recording.title,
                             "url": recording.file_url,
-                            "cost": recording.cost,
+                            "cost": format(recording.cost, '.2f'),
                             "description": recording.description,
                             "recording_id": recording.pk
                         }
@@ -614,7 +619,7 @@ class RecordingAPI(APIView):
                         {
                             "title": recording.title,
                             "course": recording.course,
-                            "cost": recording.cost,
+                            "cost": format(recording.cost, '.2f'),
                             "recording_id": recording.pk
                         }
                         for recording in recordings
@@ -663,7 +668,9 @@ class WithdrawalRequestAPI(APIView):
             if float(userobj.earnings) - amount < 0:
                 return Response({"message": "Insufficient funds."}, status=status.HTTP_400_BAD_REQUEST)
             
-            userobj.earnings -= amount
+            balance_ = float(userobj.earnings)
+            balance = round(balance_ - amount, 2)
+            userobj.earnings = balance
             userobj.save()
             
             # Use Withdrawal's static method to generate the transaction ID
@@ -731,10 +738,10 @@ class GetTransactionsAPI(APIView):
                 transactions = Withdrawal.objects.filter(tutor = user)
                 data = [
                     {
-                        "balance": transaction.tutor.earnings,
-                        "amount": transaction.amount,
+                        "balance": format(transaction.tutor.earnings, '.2f'),
+                        "amount": format(transaction.amount, '.2f'),
                         "transaction_id": transaction.transaction_id,
-                        "payment_date": transaction.payment_date,
+                        "payment_date": transaction.payment_date.strftime('%Y-%m-%d %H:%M'),
                         "status": transaction.status
                     }
                     for transaction in transactions
@@ -743,10 +750,10 @@ class GetTransactionsAPI(APIView):
                 transactions = Payment.objects.filter(student=user)
                 data = [
                         {
-                            "amount": transaction.amount,
+                            "amount": format(transaction.amount, '.2f'),
                             "transaction_id": transaction.transaction_id,
-                            "payment_date": transaction.payment_date,
-                            "Expiration_date": transaction.expiration_date,
+                            "payment_date": transaction.payment_date.strftime('%Y-%m-%d %H:%M'),
+                            "Expiration_date": transaction.expiration_date.strftime('%Y-%m-%d %H:%M'),
                             "status": transaction.status
                         }
                         for transaction in transactions
