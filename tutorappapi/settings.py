@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'tutorappapi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'apidbstore.sqlite3',
+        'NAME': BASE_DIR / 'apidstore.sqlite3',
     }
 }
 
