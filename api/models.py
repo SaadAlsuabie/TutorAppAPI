@@ -184,7 +184,7 @@ class Withdrawal(models.Model):
     transaction_id = models.CharField(max_length=100, null=True, blank=True)
     status = models.CharField(max_length=100, choices=PAYMENT_STATUS_CHOICES, default='pending')
     payment_date = models.DateTimeField(auto_now_add=True)
-    
+     
             
             
 class Feedback(models.Model):
@@ -202,6 +202,7 @@ class Recording(models.Model):
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     file_url = models.CharField(max_length=255, null=True, blank=True)
+    file = models.FileField(upload_to='recordings/')
     cost = models.CharField(max_length=255, null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     

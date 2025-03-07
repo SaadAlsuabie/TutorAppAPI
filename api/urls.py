@@ -7,7 +7,7 @@ from .views import (
     GetNotificationsAPI, SearchTutorsAPI, LogoutAPIView, 
     GetAllTutorsAPI, GetAllStudentsAPI, GetAllRequestsAPI, 
     RequestSessionListAPI, GetTransactionsAPI, WithdrawalRequestAPI,
-    DashboardAPI
+    DashboardAPI, FetchVideoAPIView
 ) 
  
 urlpatterns = [
@@ -23,6 +23,7 @@ urlpatterns = [
     path('leave-feedback/', LeaveFeedbackAPI.as_view(), name='leave-feedback'),
  
     path('recording/', RecordingAPI.as_view(), name='recording'),
+    path('video/<str:recording_id>/', FetchVideoAPIView.as_view(), name='fetch_video'),
     
     # Tutor Path
     path('set-availability/', SetAvailabilityAPI.as_view(), name='set-availability'),

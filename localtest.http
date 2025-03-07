@@ -13,7 +13,7 @@ Content-Type: application/json
     "yearleveltutor": "2",
     "yearlevelstudent": "1",
     "courses": "COMP 123"
-} 
+}  
 ### Login a user - Login and Get profile - Profile
 POST http://127.0.0.1:8000/login/ HTTP/1.1
 Content-Type: application/json
@@ -209,7 +209,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "course": "MATH101",
     "price": 15.00,
     "description": "Introducing basics to calculus 1,2 and 3",
-    "file":"fileurl"
+    "file_url":"fileurl"
 }
 
 ### Recordings - list recordings

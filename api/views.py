@@ -1,6 +1,9 @@
 import random
 import string
+from django.http import FileResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -575,9 +578,17 @@ class AcceptDeclineSessionAPI(APIView):
     #     session_request.save()
 
     #     return Response({"message": f"Session request {status_action}"}, status=status.HTTP_200_OK)
+class FetchVideoAPIView(APIView):
+    def get(self, request, recording_id, *args, **kwargs):
+        # Fetch the video file from the database
+        course_material = get_object_or_404(Recording, id=int(recording_id))
+        file_path = course_material.file.path
+
+        return FileResponse(open(file_path, 'rb'), content_type='video/mp4')
 
 class RecordingAPI(APIView): 
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         try:
@@ -592,8 +603,8 @@ class RecordingAPI(APIView):
                             "course": recording.course,
                             "tutor": recording.tutor.full_name,
                             "title":recording.title,
-                            "url": recording.file_url,
-                            "cost": format(recording.cost, '.2f'),
+                            "url": recording.file.path,
+                            "cost": f"{float(recording.cost):.2f}",
                             "description": recording.description,
                             "recording_id": recording.pk
                         }
@@ -605,7 +616,7 @@ class RecordingAPI(APIView):
                             "course": recording_.recording.course,
                             "tutor": recording_.recording.tutor.full_name,
                             "title":recording_.recording.title,
-                            "url": recording_.recording.file_url,
+                            "url": recording_.recording.file.path,
                             "purchased_date": recording_.purchase_date,
                             "description": recording_.recording.description
                         }
@@ -619,7 +630,7 @@ class RecordingAPI(APIView):
                         {
                             "title": recording.title,
                             "course": recording.course,
-                            "cost": format(recording.cost, '.2f'),
+                            "cost": f"{float(recording.cost):.2f}",
                             "recording_id": recording.pk
                         }
                         for recording in recordings
@@ -627,10 +638,19 @@ class RecordingAPI(APIView):
                 }
             return Response({"data":data}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"An error occurred. {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         try:
+            if 'file' not in request.FILES:
+                return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+            uploaded_file = request.FILES['file']
+            file_path = f"media/{uploaded_file.name}"
+            with open(file_path, 'wb+') as destination:
+                for chunk in uploaded_file.chunks():
+                    destination.write(chunk)
+                    
             user = request.user
             queries: dict = request.query_params
             data: dict = request.data
@@ -638,6 +658,27 @@ class RecordingAPI(APIView):
             query = queries.get("query", None)
             
             if query == "upload" and user.role == "tutor":
+                title = data.get("title")
+                course = data.get("course")
+                price = data.get("price")
+                description = data.get("description")
+                file = data.get("file_url")
+                
+                uploaded_file = request.FILES.get('file')
+
+                if not all([title, course, price, description, uploaded_file]):
+                    return Response({'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
+
+                
+                Recording.objects.create(
+                    tutor = user,
+                    course = course,
+                    title = title,
+                    description = description,
+                    file_url = file,
+                    file = uploaded_file,
+                    cost = price
+                )
                 return Response({"message": "successfully uploaded"}, status=status.HTTP_200_OK)
             
             else:
