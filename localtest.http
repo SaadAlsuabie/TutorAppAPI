@@ -3,11 +3,11 @@ POST http://127.0.0.1:8000/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "student",
-    "fullname":"student_firstname student_lastname",
-    "email": "student@student.example.com",
+    "username": "tutor",
+    "fullname":"Ethan Smith",
+    "email": "tutor@tutor.example.com",
     "password": "1234",
-    "role": "student",
+    "role": "tutor",
     "faculty": "Engineering",
     "major": "Computer Science",
     "yearleveltutor": "2",
@@ -43,23 +43,23 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 #------------------------------------- _Student_ -----------------------------------
 ### Dashboard
 GET http://127.0.0.1:8000/dashboard/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Search tutors - Find tutor
 GET http://127.0.0.1:8000/search-tutors/?tutorname=&faculty=&major=&course= HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Search tutors - Find tutor
 GET http://127.0.0.1:8000/search-tutors/?all=true HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Request a session with a tutor - Find Tutor
 POST http://127.0.0.1:8000/request-session/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 {
-    "tutor": 1,
+    "tutor": 3,
     "session_type": "one-on-one",
     "requested_time": "2025-10-15T14:00:00Z",
     "message": "I have problem with calculus"
@@ -68,18 +68,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Tutor pending session listings - Requests
 GET http://127.0.0.1:8000/request-session-listings/?query=all HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Request a session with a tutor - My sessions
 GET http://127.0.0.1:8000/request-session-listings/?query=search&id=5 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 
 ### Send a message Messages
 POST http://127.0.0.1:8000/send-message/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 {
     "session_request_id": 3,
@@ -88,22 +88,22 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ### Get messages -Messages
 GET http://127.0.0.1:8000/get-messages/?query=all HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Get messages _ Messages
 GET http://127.0.0.1:8000/get-messages/?query=3 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 
 ### Get transactions
 GET http://127.0.0.1:8000/get-transactions/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Make a payment
 POST http://127.0.0.1:8000/make-payment/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 {
     "amount": "50.00",
@@ -114,12 +114,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Get Recordings
 GET http://127.0.0.1:8000/recording/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Leave feedback for a tutor
 POST http://127.0.0.1:8000/leave-feedback/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 {  
     "to_user": 2,
@@ -129,43 +129,43 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ### Get notifications
 GET http://127.0.0.1:8000/get-notifications/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Get video
 GET http://127.0.0.1:8000/video/2/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDEyLCJpYXQiOjE3NDEyNzAwMTIsImp0aSI6IjgzZGJjMTA1NTAyNzRkZDBiZjVmMDI0NGQzODFmNjRlIiwidXNlcl9pZCI6Mn0.jVZBOIt-kFqXDO0ffpyzcY1rgWJ56XUgt1_26BnXqNI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 
 #------------------------------------------ _Tutor_ -----------------------------------------
 ### Get Dashboard - dashboard
 GET http://127.0.0.1:8000/dashboard/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Tutor pending session listings - Requests
 GET http://127.0.0.1:8000/request-session-listings/?query=pending HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Tutor accepted session listings - My sessions
 GET http://127.0.0.1:8000/request-session-listings/?query=accepted HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Request a session with a tutor - My sessions
 GET http://127.0.0.1:8000/request-session-listings/?query=search&id=5 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 
 ### Request a session with a tutor - My sessions <accept session>
 POST http://127.0.0.1:8000/accept-decline-session/1/?action=accept HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Request a session with a tutor - My sessions <decline session>
 POST http://127.0.0.1:8000/accept-decline-session/2/?action=decline HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
     "decline_reason": "I am a little held up"
@@ -174,7 +174,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Send a message - messages
 POST http://127.0.0.1:8000/send-message/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
     "session_request_id": 3,
@@ -183,20 +183,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ### Get messages -Messages
 GET http://127.0.0.1:8000/get-messages/?query=all HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Get messages - Messages
 GET http://127.0.0.1:8000/get-messages/?query=1 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Get earnings - Earnings
 GET http://127.0.0.1:8000/get-transactions/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 ### Withdraw - withdrawal
 POST http://127.0.0.1:8000/withdrawal/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
     "amount": 50
@@ -206,7 +206,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 ### Recordings - upload
 POST http://127.0.0.1:8000/recording/?query=upload HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
     "title": "Calculus Basics - Part 1",
@@ -218,5 +218,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 ### Recordings - list recordings
 GET http://127.0.0.1:8000/recording/ HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyODA2MDUzLCJpYXQiOjE3NDEyNzAwNTMsImp0aSI6IjliZWE4NjFmN2RhNjRlZDNhMmRlZjg1MDFmMWY5NTlmIiwidXNlcl9pZCI6MX0.altRNEZ8K02gMST2-F6-UUoVQS2RbKvjJdEWBbbztWM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
