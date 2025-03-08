@@ -158,7 +158,12 @@ class LoginAPI(APIView):
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
                 "role": logged_user.role,
-                "username": logged_user.username
+                "username": logged_user.username,
+                "email": logged_user.email,
+                "faculty": TutorProfile.objects.get(user=logged_user).faculty if logged_user.role == "tutor" else StudentProfile.objects.get(user=logged_user).faculty,
+                "major": TutorProfile.objects.get(user=logged_user).major if logged_user.role == "tutor" else StudentProfile.objects.get(user=logged_user).major,
+                "rate": None,
+                "rating": None
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
