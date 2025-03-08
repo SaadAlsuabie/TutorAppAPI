@@ -60,7 +60,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 {
     "tutor": 3,
-    "session_type": "one-on-one",
+    "session_type": "group",
     "requested_time": "2025-10-15T14:00:00Z",
     "message": "I have problem with calculus"
 }
@@ -82,8 +82,8 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 {
-    "session_request_id": 3,
-    "content": "sure. I will be available."
+    "session_request_id": 1,
+    "content": "cool."
 }
 
 ### Get messages -Messages
@@ -91,7 +91,7 @@ GET https://accentor490.pythonanywhere.com/get-messages/?query=all HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 ### Get messages _ Messages
-GET https://accentor490.pythonanywhere.com/get-messages/?query=3 HTTP/1.1
+GET https://accentor490.pythonanywhere.com/get-messages/?query=1 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTIxLCJpYXQiOjE3NDE0MjM5MjEsImp0aSI6ImZjYjA5YjNhMGZlNjQ2NjNhYjI5ZDBlYzIwMmVlNmE4IiwidXNlcl9pZCI6Mn0.Afkob5ectcKkNGNV4OxAxIeTGia36L2lyYVsSTkEv4s
 
 
@@ -177,7 +177,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
-    "session_request_id": 3,
+    "session_request_id": 1,
     "content": "Hi, we can have a meeting tommorow"
 }
 
@@ -199,7 +199,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyOTU5OTc1LCJpYXQiOjE3NDE0MjM5NzUsImp0aSI6ImVmYmIxMWQ0OGJlZjQxOTBhNDYzMjBhYmQxMzFkODFhIiwidXNlcl9pZCI6M30.nIzTSW4SD7bFMU3qwGQ7pE_q1QVTkhNfiX4crfqL4PU
 
 {
-    "amount": 50
+    "amount": 5
 }
 
 

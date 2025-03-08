@@ -785,11 +785,12 @@ class GetTransactionsAPI(APIView):
     def get(self, request):
         try:
             user = request.user
+            balance = 0
             if user.role != "student":
                 transactions = Withdrawal.objects.filter(tutor = user)
+                balance = format(user.earnings, '.2f')
                 data = [
                     {
-                        "balance": format(transaction.tutor.earnings, '.2f'),
                         "amount": format(transaction.amount, '.2f'),
                         "transaction_id": transaction.transaction_id,
                         "payment_date": transaction.payment_date.strftime('%Y-%m-%d %H:%M'),
@@ -809,7 +810,7 @@ class GetTransactionsAPI(APIView):
                         }
                         for transaction in transactions
                 ]
-            return Response({"data": data}, status=status.HTTP_200_OK)
+            return Response({"data": data, "balance": balance}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
