@@ -333,7 +333,7 @@ class RequestSessionListAPI(APIView):
                         "message":req.message,
                         "request_date":req.requested_time,
                         "request_id":req.id,
-                        "tutor":req.tutor.username,
+                        "tutor":req.tutor.full_name,
                         "tutor_id":req.tutor.id,
                         "status":req.status,
                     }
@@ -348,7 +348,7 @@ class RequestSessionListAPI(APIView):
                         "message":req.message,
                         "request_date":req.requested_time,
                         "request_id":req.id,
-                        "tutor":req.tutor.username,
+                        "tutor":req.tutor.full_name,
                         "tutor_id":req.tutor.id,
                         "status":req.status
                     }
@@ -363,7 +363,7 @@ class RequestSessionListAPI(APIView):
                         "message":req.message,
                         "request_date":req.requested_time,
                         "request_id":req.id,
-                        "tutor":req.tutor.username,
+                        "tutor":req.tutor.full_name,
                         "tutor_id":req.tutor.id,
                         "status":req.status
                     }
@@ -378,7 +378,7 @@ class RequestSessionListAPI(APIView):
                         "message":req.message,
                         "request_date":req.requested_time,
                         "request_id":req.id,
-                        "tutor":req.tutor.username,
+                        "tutor":req.tutor.full_name,
                         "tutor_id":req.tutor.id,
                         "status":req.status,
                         "decline_reason": req.decline_reason
